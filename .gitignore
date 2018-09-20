@@ -1,0 +1,12 @@
+# Temporary files
+
+# Generated files
+*.aux
+*.log
+*.synctex.gz
+*.thm
+
+# Binary files
+*.pdf
+
+# External files

@@ -1,0 +1,44 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Lecture 01)}
+\author{Zhihan Li}
+\date{September 20, 2018}
+
+\DeclareMathOperator\ope{\mathrm{E}}
+\DeclareMathOperator\opvar{\mathrm{Var}}
+\DeclareMathOperator\oprank{\mathrm{rank}}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} Here $C$ is a consistent estimator of $ A B $ because
+\begin{equation}
+\ope C = \sum_{ m = 1 }^K \ope L^{\rbr{m}} R^{\rbr{m}} = \sum_{ m = 1 }^K \sum_{ i = 1 }^n p_i \frac{1}{\sqrt{ K p_i }} A_{ \cdot, i } \frac{1}{\sqrt{ K p_i }} B_{ i, \cdot } = \sum_{ i = 1 }^n A_{ \cdot, i } B_{ i, \cdot } = A B.
+\end{equation}
+The variance under Frobenius norm is
+\begin{equation}
+\begin{split}
+\opvar C &= \ope \norm{C}_{\text{F}}^2 - \norm{ \ope C }_{\text{F}}^2 \\
+&= \ope \pbr{ \sum_{ m = 1 }^K L^{\rbr{m}} R^{\rbr{m}}, \sum_{ m' = 1 }^K L^{\rbr{m'}} R^{\rbr{m'}} } - \norm{ A B }_{\text{F}}^2 \\
+&= K \ope \norm{ L^{\rbr{1}} R^{\rbr{1}} }_{\text{F}}^2 + \rbr{ K^2 - K } \ope \pbr{ L^{\rbr{1}} R^{\rbr{1}}, L^{\rbr{2}}, R^{\rbr{2}} } -\norm{ A B }_{\text{F}}^2 \\
+&= K \sum_{ i = 1 }^n p_i \frac{1}{ K^2  p_i^2} \norm{A_{ \cdot, i }}^2 \norm{B_{ i, \cdot }}^2 + \rbr{ K^2 - K } \frac{1}{K^2} \norm{ A B }_{\text{F}}^2 - \norm{ A B }_{\text{F}}^2 \\
+&= \frac{1}{K} \rbr{ \sum_{ i = 1 }^n \frac{1}{p_i} \norm{A_{ \cdot, i }}^2 \norm{B_{ i, \cdot }}^2 - \norm{ A B }_{\text{F}}^2 } \\
+&\ge \frac{1}{K} \rbr{ \rbr{ \sum_{ i = 1 }^n \norm{A_{ \cdot, i }} \norm{B_{ i, \cdot }} }^2 - \norm{ A B }_{\text{F}}^2 },
+\end{split}
+\end{equation}
+where the equality is attained when
+\begin{equation}
+p_i = \bfrac{ \norm{A_{ \cdot, i }} \norm{B_{ i, \cdot }} }{ \sum_{ j = 1 }^n \norm{A_{ \cdot, j }} \norm{B_{ j, \cdot }} }.
+\end{equation}
+
+This method may work well for big matrices especialy with $n$ is very large. However, this method does not make full use of information lying in $A$ and $B$, and this leads to $ \oprank C \le K $. So this method fails if we want to consider rank or spectrum structure of the product matrix. Another problem is that this method only benefits if we want to get the matrix $C$ rather than calculate $ C x $ for some vector $x$. For $ C x $, a faster algorithm is to compute $ A \rbr{ B x } $ directly.
+
+\textbf{Problem 2.} \textit{Answer.} 
+
+\end{document}
+\end{document}
