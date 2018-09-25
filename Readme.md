@@ -8,3 +8,9 @@ This repository relies on the personal TeX templates package [ptmpls](https://gi
 
 There are several sub folders in this repository:
 1. `LxxExercise`: Written exercise for lecture `xx`.
+
+There are several commands recorded in Makefiles:
+1. `make all`: generate files automatically.
+2. `make environment`: create a anaconda environment.
+3. `make run` (in sub folders): run the code.
+4. `make report` (in sub folders): compile the report.  

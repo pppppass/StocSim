@@ -2,11 +2,12 @@
 %! TeX program = LuaLaTeX
 
 \documentclass[english, nochinese]{pnote}
-\usepackage[paper]{pdef}
+\usepackage[paper, cmrgreekup]{pdef}
+\usepackage{pgf}
 
 \title{Answers to Exercises (Lecture 01)}
 \author{Zhihan Li}
-\date{September 20, 2018}
+\date{September 25, 2018}
 
 \DeclareMathOperator\ope{\mathrm{E}}
 \DeclareMathOperator\opvar{\mathrm{Var}}
@@ -38,7 +39,40 @@ p_i = \bfrac{ \norm{A_{ \cdot, i }} \norm{B_{ i, \cdot }} }{ \sum_{ j = 1 }^n \n
 
 This method may work well for big matrices especialy with $n$ is very large. However, this method does not make full use of information lying in $A$ and $B$, and this leads to $ \oprank C \le K $. So this method fails if we want to consider rank or spectrum structure of the product matrix. Another problem is that this method only benefits if we want to get the matrix $C$ rather than calculate $ C x $ for some vector $x$. For $ C x $, a faster algorithm is to compute $ A \rbr{ B x } $ directly.
 
-\textbf{Problem 2.} \textit{Answer.} 
+\textbf{Problem 2.} \textit{Answer.} To numerically verify, we take $N$ to be different values and observe $ \ope e_N^2 $ and $ \ope \abs{e_N} $. We estimate the expectation by taking $ m = 1000 $ repeated run and report the averaged $e_N^2$ and $\abs{e_N}$. The result are shown in Figure \ref{Fig:ErrSq} and \ref{Fig:ErrAbs}.
 
-\end{document}
+\begin{figure}[htb]
+\centering
+\input{Figure1.pgf}
+\caption{Estimated $ \ope e_N^2 $}
+\label{Fig:ErrSq}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\input{Figure2.pgf}
+\caption{Estimated $ \ope \abs{e_N} $}
+\label{Fig:ErrAbs}
+\end{figure}
+
+It can be clearly seen from the figures that $ \ope e_N^2 \sim \Theta \rbr{N^{-1}} $ and $ \ope \abs{e_N} \sim \Theta \rbr{N^{ -1 / 2 }} $. The first relation has been explained in the handout, and accounts for half order convergence in some sense. The second relation is more direct for half order convergence and can be understood as follows. Because of Lindeberg--L\'evy central limit theorem, we derive that $ X_N := \sqrt{N} e_N / \sqrt{ \opvar f } $ converges to $ \mathcal{N} \rbr{ 0, 1 } $ in distribution. Since $e_N$ is the average of $N$ i.i.d. random variables, we have
+\begin{equation}
+\ope X_N^2 \equiv 1.
+\end{equation}
+Therefore, we deduce
+\begin{equation}
+\ope \abs{X_N} 1_{ X_N > M } \le \frac{1}{M}
+\end{equation}
+and this implies the uniform integrability of $X_N$. As a result, it follows that
+\begin{equation}
+\ope \abs{X_N} = \ope \abs{X} = \sqrt{\frac{2}{\spi}}
+\end{equation}
+and
+\begin{gather}
+\ope \abs{e_N} \sim \sqrt{\frac{ 2 \opvar f }{ \spi N }} + o \rbr{\frac{1}{\sqrt{N}}}, \\
+\ope \abs{e_N} \sim \Theta \rbr{N^{ -1 / 2 }}
+\end{gather}
+as desired.
+
+
 \end{document}
