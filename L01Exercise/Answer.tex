@@ -7,7 +7,7 @@
 
 \title{Answers to Exercises (Lecture 01)}
 \author{Zhihan Li, 1600010653}
-\date{September 25, 2018}
+\date{September 26, 2018}
 
 \DeclareMathOperator\ope{\mathrm{E}}
 \DeclareMathOperator\opvar{\mathrm{Var}}
@@ -36,6 +36,7 @@ where the equality is attained when
 \begin{equation}
 p_i = \bfrac{ \norm{A_{ \cdot, i }} \norm{B_{ i, \cdot }} }{ \sum_{ j = 1 }^n \norm{A_{ \cdot, j }} \norm{B_{ j, \cdot }} }.
 \end{equation}
+This means this algorithm has half order convergence with respect to $K$.
 
 This method may work well for big matrices especialy with $n$ is very large. However, this method does not make full use of information lying in $A$ and $B$, and this leads to $ \oprank C \le K $. So this method fails if we want to consider rank or spectrum structure of the product matrix. Another problem is that this method only benefits if we want to get the matrix $C$ rather than calculate $ C x $ for some vector $x$. For $ C x $, a faster algorithm is to compute $ A \rbr{ B x } $ directly.
 

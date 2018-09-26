@@ -16,4 +16,3 @@ recursive:
 .PHONY: environment
 environment: environment.yml
 	conda env create -f envorinment.yml
-

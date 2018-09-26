@@ -82,7 +82,7 @@ for n in n_list:
 
 
 with shelve.open("Result") as db:
-    db["n"] = n_list
-    db["e^2"] = rt[0]
-    db["|e|"] = rt[1]
+    db["size"] = n_list
+    db["error2"] = rt[0]
+    db["error1"] = rt[1]
 
