@@ -1,4 +1,4 @@
-DIRS = ptmpls L01Exercise
+DIRS = $(shell ls -d */)
 
 .PHONY: all
 all: recursive environment.yml
