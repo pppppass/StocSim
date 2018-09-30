@@ -1,0 +1,148 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, safebm]{pdef}
+\usepackage{pgf}
+
+\DeclareMathOperator\oppr{\mathrm{Pr}}
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 02)}
+\author{Zhihan Li, 1600010653}
+\date{September 29, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Proof.} Note that
+\begin{equation} \label{Eq:IODef}
+\overline{\cbr{ A_n \mathit{i.o.} }} = \bigcup_{ n = 1 }^{\infty} \bigcap_{ k = n }^{\infty} \overline{A_k}.
+\end{equation}
+Because
+\begin{equation}
+\oppr \rbr{ \bigcap_{ k = n }^{\infty} \overline{A_k} } \le \oppr \rbr{ \bigcap_{ k = n }^m \overline{A_k} } = \prod_{ k = n }^m \rbr{ 1 - \oppr \rbr{A_k} } \le \frac{1}{ 1 + \sum_{ k = n }^m \oppr \rbr{A_k} },
+\end{equation}
+letting $ m \rightarrow \infty $, $ \sum_{ k = 1 }^{\infty} \oppr \rbr{A_k} = +\infty $ yields
+\begin{equation}
+\oppr \rbr{ \bigcap_{ k = n }^{\infty} \overline{A_k} } = 0
+\end{equation}
+and therefore
+\begin{gather}
+\oppr \rbr{\overline{\cbr{ A_n \mathit{i.o.} }}} = 0, \\
+\oppr \rbr{ A_n \mathit{i.o.} } = 1.
+\end{gather}
+\hfill$\Box$
+
+\textbf{Problem 2.} \textit{Proof.} The characteristic function of $X$ and $Y$ are
+\begin{gather}
+f \rbr{t} =  \se^{ \lambda \rbr{ \se^{ \si t } - 1 } },
+g \rbr{t} =  \se^{ \mu \rbr{ \se^{ \si t } - 1 } },
+\end{gather}
+respectively. Since $X$ and $Y$ are independent, the characteristic function of $ X + Y $ is
+\begin{equation}
+f \rbr{t} g \rbr{t} = \se^{ \rbr{ \lambda + \mu } \rbr{ \se^{ \si t } - 1 } },
+\end{equation}
+which coincides that of $ \mathcal{P} \rbr{ \lambda + \mu } $. The continuity theorem yields $ X + Y \sim \mathcal{P} \rbr{ \lambda + \mu } $.
+\hfill$\Box$
+
+\textbf{Problem 3.} \textit{Proof.} Noting that
+\begin{equation}
+\oppr \rbr{ X + Y = N = n } = \sum_{ k = 0 }^n \rbr{ \frac{\lambda^k}{ k ! } \frac{\mu^{ n - k }}{ \rbr{ n - k } ! } \se^{ -\lambda - \mu} } = \frac{\rbr{ \lambda + \mu }^n}{ n ! } \se^{ -\lambda - \mu},
+\end{equation}
+we have
+\begin{equation}
+\oppr \rbr{ X = k \mvert N = n } = \frac{ \frac{\lambda^k}{ k ! } \frac{\mu^{ n - k }}{ \rbr{ n - k } ! } \se^{ -\lambda - \mu} }{ \frac{\rbr{ \lambda + \mu }^n}{ n ! } \se^{ -\lambda - \mu} } = \binom{n}{k} \rbr{\frac{\lambda}{ \lambda + \mu }}^k \rbr{\frac{\mu}{ \lambda + \mu }}^{ n - k }.
+\end{equation}
+Consequently, with $n$ given, $ \nvbr{X}_{ N = n } \sim \mathcal{B} \rbr{ n, \frac{\lambda}{ \lambda + \mu } } $. Identical argument holds for $Y$.
+\hfill$\Box$
+
+\textbf{Problem 4.} \textit{Proof.} 1. We have
+\begin{equation}
+\begin{split}
+&\ptrel{=} \oppr \rbr{ X > s + t \mvert X > s } \\
+&= \frac{ \oppr \rbr{ X > s + t } }{ \oppr \rbr{ X > s } } = \frac{ \int_{ s + t }^{\infty}{ \lambda \se^{ -\lambda x } \sd x } }{ \int_s^{\infty}{ \lambda \se^{ -\lambda x } \sd x } } = \frac{\se^{ -\lambda \rbr{ s + t } }}{\se^{ -\lambda s }} \\
+&= \se^{ -\lambda t } = \int_t^{\infty} \lambda \se^{ -\lambda x } \sd x = \oppr \rbr{ X > t }
+\end{split}
+\end{equation}
+
+2. We needs to further assume $X$ to be positive. Denote $ F \rbr{x} = \oppr \rbr{ X > x } $, and we have for $ s, t > 0 $, $ F \rbr{ s + t } = F \rbr{s} F \rbr{t} $. Since $X$ is positive, $ F \rbr{0} = 1 $. Because $F$ is continuous from the right, we know there exists $ \epsilon > 0 $ such that $ F \rbr{\epsilon} > 0 $ and therefore $ F \rbr{ k \epsilon } > 0 $ for any $k$. This means $ F \rbr{x} > 0 $ for all $ x \ge 0 $. Taking logarithm, we deduce
+\begin{equation}
+\ln F \rbr{ s + t } = \ln F \rbr{s} + \ln F \rbr{t}
+\end{equation}
+for $ s, t > 0 $. Since $ \ln F \rbr{x} $ is bounded, the theory of such Cauchy equations yields $ \ln F \rbr{x} $ is a linear function, say (notice that $ \ln F \rbr{0} = 0 $)
+\begin{equation}
+\ln F \rbr{x} = -\lambda x.
+\end{equation}
+Moreover, because $F$ is monotonically decreasing to $0$ at infinity, $ \lambda > 0 $.
+This means
+\begin{equation}
+F \rbr{x} = \se^{ -\lambda x }
+\end{equation}
+and $ X \sim \mathcal{E} \rbr{\lambda} $.
+\hfill$\Box$
+
+\textbf{Problem 5.} \textit{Proof.} The moment generating function of $ \mathbf{X} = \rbr{ X_1, X_2, \cdots, X_n } $ is
+\begin{equation}
+M \rbr{\mathbf{t}} = \exp \frac{1}{2} \mathbf{t}^{\text{T}} \bm{\Sigma} \mathbf{t},
+\end{equation}
+which has the expansion
+\begin{equation} \label{Eq:ExpMom}
+M \rbr{\mathbf{t}} = \sum_{ k = 0 }^{\infty} \frac{1}{ k ! 2^k } \rbr{ \mathbf{t}^{\text{T}} \bm{\Sigma} \mathbf{t} }^k.
+\end{equation}
+When $n$ is odd, there are no n-th order terms in \eqref{Eq:ExpMom}, not to mention $ t_1 t_2 \cdots t_n $. This means the moment $ \ope X_1 X_2 \cdots X_n $ vanishes. When $n$ is even, we know from combinatorics that coefficients of $ t_1 t_2 \cdots t_n $ in $ \rbr{ \mathbf{t}^{\text{T}} \bm{\Sigma} \mathbf{t} }^{ n / 2 } $ is exactly
+\begin{equation}
+\rbr{ n / 2 } ! 2^{ n / 2 } \sum \prod \Sigma_{ i j }.
+\end{equation}
+As a result, the moment
+\begin{equation}
+\ope X_1 X_2 \cdots X_n = \frac{ \rbr{ n / 2 } ! 2^{ n / 2 } }{ \rbr{ n / 2 } ! 2^{ n / 2 }} \sum \prod \Sigma_{ i j } = \sum \prod \Sigma_{ i j }.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 6.} \textit{Proof.} We have
+\begin{equation}
+\oppr \rbr{ \bigcap_{ n = 1 }^{\infty} \overline{A_n} } = 0.
+\end{equation}
+Noting that
+\begin{equation}
+\oppr \rbr{ \bigcap_{ n = k }^{\infty} \overline{A_n} } = \rbr{ 1 - \oppr \rbr{A_k} } \oppr \rbr{ \bigcap_{ n = k + 1 }^{\infty} \overline{A_n} }
+\end{equation}
+and $ 1 - \oppr \rbr{A_k} \neq 0 $, mathematical induction yields
+\begin{equation}
+\oppr \rbr{ \bigcap_{ n = k }^{\infty} \overline{A_n} } = 0.
+\end{equation}
+Similar to Problem 1, we deduce from \eqref{Eq:IODef} that
+\begin{equation}
+\oppr \rbr{ A_n \textit{i.o.} } = 1.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 7.} \textit{Answer.} We first investigate the first limiting process. We plot the probability mass function of $ \mathcal{B} \rbr{ n, p } $ and $ \mathcal{P} \rbr{\lambda} $ with $ \lambda = 5 $ fixed and $ n p = \lambda $ in Figure \ref{Fig:BinomPoi}.
+
+\begin{figure}[htb]
+\centering
+\scalebox{0.7}{\input{Figure1.pgf}}
+\caption{Convergence from $ \mathcal{B} \rbr{ n, p } $ to $ \mathcal{P} \rbr{\lambda} $}
+\label{Fig:BinomPoi}
+\end{figure}
+
+From Figure \ref{Fig:BinomPoi}, it can be seen that $ \mathcal{B} \rbr{ n, p } $ converges to $ \mathcal{P} \rbr{\lambda} $ numerically.
+
+We then investigate the second limiting process. We plot the probability mass function of $ \mathcal{P} \rbr{\lambda} $ and $ \mathcal{N} \rbr{ \lambda, \lambda } $ (we actually evaluate
+\begin{equation}
+p_i = \oppr \rbr{ i - \frac{1}{2} \le x < i + \frac{1}{2} }
+\end{equation}
+for the ``probability mass function'') in Figure \ref{Fig:PoiNorm}.
+
+\begin{figure}[htb]
+\centering
+\scalebox{0.7}{\input{Figure2.pgf}}
+\caption{Convergence from $ \mathcal{P} \rbr{\lambda} $ and $ \mathcal{N} \rbr{ \lambda, \lambda } $}
+\label{Fig:PoiNorm}
+\end{figure}
+
+Convergence can also be seen in Figure \ref{Fig:PoiNorm}.
+
+\end{document}
