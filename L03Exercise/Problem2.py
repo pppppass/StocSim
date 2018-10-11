@@ -12,7 +12,8 @@ import numpy
 # In[2]:
 
 
-def gen_sphere_hei_ang(n):
+def gen_sphere_hei_ang(size):
+    n = size
     z = numpy.random.uniform(-1.0, 1.0, n)
     r = numpy.sqrt(1 - z**2)
     t = numpy.random.uniform(0.0, 2.0 * numpy.pi, n)
@@ -24,15 +25,17 @@ def gen_sphere_hei_ang(n):
 # In[3]:
 
 
-def gen_sphere_box_norm(n):
+def gen_sphere_box_norm(size, buf):
+    n, k = size, buf
     x = numpy.random.uniform(-1.0, 1.0, n)
     y = numpy.random.uniform(-1.0, 1.0, n)
     z = numpy.random.uniform(-1.0, 1.0, n)
     r = x**2 + y**2 + z**2
     b = r <= 1.0
-    x, y, z = x[b], y[b], z[b]
-    r = numpy.sqrt(r[b])
+    r = numpy.sqrt(r)
     x, y, z = x / r, y / r, z / r
+    x, y, z, r, b = x[:buf], y[:buf], z[:buf], r[:buf], b[:buf]
+    x, y, z = x[b], y[b], z[b]
     return x, y, z
 
 
@@ -52,29 +55,17 @@ def gen_sphere_gauss_norm(n):
 # In[5]:
 
 
-x, y, z = gen_sphere_box_norm(10)
+rt = [[], [], []]
 
 
 # In[6]:
 
 
-x.size
-
-
-# In[7]:
-
-
-rt = [[], [], []]
-
-
-# In[8]:
-
-
-n = 100000000
+n = 200000000
 m = 1000
 
 
-# In[9]:
+# In[7]:
 
 
 numpy.random.seed(1)
@@ -86,7 +77,7 @@ rt[0].append(x.size)
 print("Height-angle finished")
 numpy.save("Result1.npy", numpy.stack([x[:m], y[:m], z[:m]]))
 start = time.time()
-x, y, z = gen_sphere_box_norm(n)
+x, y, z = gen_sphere_box_norm(n, m*4)
 end = time.time()
 rt[1].append(end - start)
 rt[1].append(x.size)
@@ -101,7 +92,7 @@ print("Gaussian-normalization finished")
 numpy.save("Result3.npy", numpy.stack([x[:m], y[:m], z[:m]]))
 
 
-# In[10]:
+# In[8]:
 
 
 with shelve.open("Result") as db:
