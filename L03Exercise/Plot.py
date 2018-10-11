@@ -6,6 +6,8 @@
 
 import shelve
 import numpy
+import matplotlib
+matplotlib.use("pgf")
 from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
 
