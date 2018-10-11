@@ -32,10 +32,9 @@ def gen_sphere_box_norm(size, buf):
     z = numpy.random.uniform(-1.0, 1.0, n)
     r = x**2 + y**2 + z**2
     b = r <= 1.0
-    r = numpy.sqrt(r)
-    x, y, z = x / r, y / r, z / r
-    x, y, z, r, b = x[:buf], y[:buf], z[:buf], r[:buf], b[:buf]
     x, y, z = x[b], y[b], z[b]
+    r = numpy.sqrt(r[b])
+    x, y, z = x/r, y/r, z/r
     return x, y, z
 
 
