@@ -1,4 +1,5 @@
-PGFOBJS = Figure1.pgf Figure2.pgf
+PGFOBJS = Figure1.pgf Figure2.pgf Figure3.pgf
+TBLOBJS = Table1.tbl
 RUNOBJS = Problem2.run
 
 .PHONY: all
@@ -10,10 +11,9 @@ Answer.pdf: Answer.tex $(PGFOBJS) | Answer.aux
 Answer.aux: Answer.tex
 	lualatex Answer.tex
 
-$(PGFOBJS): $(wildcard $(RUNOBJS)) Plot.py
+.SECONDEXPANSION:
+$(PGFOBJS) $(TBLOBJS): $(wildcard $(RUNOBJS)) Plot.py
 	python Plot.py
-	sed -i 's/<LABEL1~*>/Estimated $$ \\ope e_N^2 $$/' Figure1.pgf
-	sed -i 's/<LABEL2~*>/Estimated $$ \\ope \\abs{e_N} $$/' Figure2.pgf
 
 .PRECIOUS: %.py
 %.py: %.ipynb

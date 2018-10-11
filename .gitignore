@@ -2,6 +2,7 @@
 *.bak
 .ipynb_checkpoint/
 .*~/
+*.run
 
 # Generated files
 *.aux
@@ -14,5 +15,8 @@
 *.ipynb
 *.dir
 *.dat
+*.npy
 
 # External files
+
+# Private files

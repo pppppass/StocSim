@@ -1,0 +1,105 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+\usepackage{pgf}
+
+\DeclareMathOperator\oppr{\mathrm{Pr}}
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 03)}
+\author{Zhihan Li, 1600010653}
+\date{October 10, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 2.} \textit{Answer.} We have mainly three algorithms to tackle this problem. This first algorithm ($Z$--$T$) samples $ Z \sim \mathcal{U} \sbr{ -1, 1 } $ and $ T \sim \mathcal{U} \sbr{ 0, 2 \spi } $, and calculate
+\begin{equation}
+R = \sqrt{ 1 - Z^2 }
+\end{equation}
+and
+\begin{gather}r
+X = R \cos T, \\
+Y = R \sin T.
+\end{gather}
+The rationale under this algorithm is that the probability dense function of the $z$ coordinate is
+\begin{equation}
+p \rbr{z} = \frac{ 2 \spi \sqrt{ 1 - z^2 } / \sqrt{ 1 - z^2 } }{ \int_{-1}^1 2 \spi \sqrt{ 1 - z^2 } / \sqrt{ 1 - z^2 } \sd z } = \frac{1}{2}
+\end{equation}
+and therefore $Z$ can be sampled from a uniform distribution. The uniformness of $T$ results from symmetry.
+Another algorithm (we call it ``Uniform'') samples $ X, Y, Z \sim \mathcal{U} \sbr{ -1, 1 } $ i.i.d. and calculate
+\begin{equation}
+R = \sqrt{ X^2 + Y^2 + Z^2 }.
+\end{equation}
+Then samples with $ R \ge 1 $ is rejected and
+\begin{equation}
+\rbr{ X / R, Y / R, Z / R }
+\end{equation}
+turns out to be uniform distribution on the sphere. The correctness can be proved by noting that the accepted $ \rbr{ X, Y, Z } $ are actually of the uniform distribution in the sphere, and the normalization step is spherically symmetric. A slightly modified algorithm can also be proposed and we call it ``Gaussian''. We sample $ X, Y, Z \sim \mathcal{N} \rbr{ 0, 1 } $ i.i.d. and then normalize them to get final samples. Here $ \rbr{ X, Y, Z } \sim \mathcal{N} \rbr{ \mathbf{0}, \mathbf{I}_3 } $ is already of spherical symmetry.
+
+We qualitatively compare these algorithms by looking at the scatter plots in Figure \ref{Fig:3D} and \ref{Fig:2D}.
+
+\begin{figure}[htb]
+\centering
+\scalebox{0.7}{\input{Figure1.pgf}}
+\caption{3D scatter plots of samples}
+\label{Fig:3D}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\scalebox{0.7}{\input{Figure2.pgf}}
+\scalebox{0.7}{\input{Figure3.pgf}}
+\caption{Scatter plots along axes of samples}
+\label{Fig:2D}
+\end{figure}
+
+There is no visually significant distinctions between these three algorithms.
+
+We proceed to conduct quantitatively comparison. Some numerical results are recorded in Table \ref{Tbl:Res}.
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+& $Z$--$T$ & Uniform & Gaussian \\
+\hline
+\input{Table1.tbl}
+\end{tabular}
+\caption{Comparison between algorithms}
+\label{Tbl:Res}
+\end{table}
+
+The disadvantange of the $Z$--$T$ algorithm is that is does not generalize to higher dimension. Both ``Uniform'' and ``Gaussian'' generalize, while the former suffer from an increasing rejection rate because the volume of $d$-dimensional unit ball
+\begin{equation}
+m \rbr{\mathbb{D}^d} \rightarrow 0 
+\end{equation}
+as $ d \rightarrow \infty $.
+
+\textbf{Problem 3.} \textit{Answer.} The probability measure of $X$ is
+\begin{equation}
+\frac{1}{A} f \rbr{x} \sd x.
+\end{equation}
+The overall acceptance probability is
+\begin{equation}
+\begin{split}
+&\ptrel{=} \oppr \rbr{ Y \le p \rbr{X} } = \ope_X \oppr \rbr{ Y \le p \rbr{X} \mvert X } \\
+&= \int_{-\infty}^{\infty} \frac{ p \rbr{x} }{ f \rbr{x} } \frac{1}{A} f \rbr{x} \sd x = \frac{1}{A} \int_{-\infty}^{\infty} p \rbr{x} \sd x \\
+&= \frac{1}{A}.
+\end{split}
+\end{equation}
+Hence, the overall rejection probability is
+\begin{equation}
+\oppr \rbr{ Y > p \rbr{X} } = 1 - \oppr \rbr{ Y \le p \rbr{X} } = 1 - \frac{1}{A}.
+\end{equation}
+
+\textbf{Problem 4.} \textit{Answer.} We have the marginal distribution of $X$ with respect to $ \rbr{ X, U } $ when conditioned acceptance is
+\begin{equation}
+q \rbr{ x \mvert \text{accepted} } = \frac{ q \rbr{ x, \text{accepted} } }{ \oppr \rbr{\text{accepted}} } = \frac{ g_m \rbr{x} p \rbr{x} / \rbr{ M g_m \rbr{x} } }{ \ope_X g_m \rbr{X} p \rbr{X} / \rbr{ M g_m \rbr{X} } } = p \rbr{x}
+\end{equation}
+and the correctness is proved. Compared to Algorithm 2.6, there are two distinctions. One minor is that in this algorithm $X$ is generated directly or say ``implicitly'' while in Algorithm 2.6 $X$ is generated using $ X = F^{-1} \rbr{ A Z } $, i.e., the inverse transformation method. The other one is that in this algorithm some hierarchical structure is introduced. In some cases the $p$ may be extremely expensive to evaluate and the $g_l$, which provides a estimation of lower bound of $p$, may helps filter out some of the samples and alleviate frequent evaluation of $p$.
+
+\end{document}

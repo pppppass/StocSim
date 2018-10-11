@@ -10,7 +10,7 @@
 
 \title{Answers to Exercises (Lecture 02)}
 \author{Zhihan Li, 1600010653}
-\date{September 29, 2018}
+\date{September 30, 2018}
 
 \begin{document}
 
@@ -18,7 +18,7 @@
 
 \textbf{Problem 1.} \textit{Proof.} Note that
 \begin{equation} \label{Eq:IODef}
-\overline{\cbr{ A_n \mathit{i.o.} }} = \bigcup_{ n = 1 }^{\infty} \bigcap_{ k = n }^{\infty} \overline{A_k}.
+\overline{\cbr{ A_n \mathrel{i.o.} }} = \bigcup_{ n = 1 }^{\infty} \bigcap_{ k = n }^{\infty} \overline{A_k}.
 \end{equation}
 Because
 \begin{equation}
@@ -30,8 +30,8 @@ letting $ m \rightarrow \infty $, $ \sum_{ k = 1 }^{\infty} \oppr \rbr{A_k} = +\
 \end{equation}
 and therefore
 \begin{gather}
-\oppr \rbr{\overline{\cbr{ A_n \mathit{i.o.} }}} = 0, \\
-\oppr \rbr{ A_n \mathit{i.o.} } = 1.
+\oppr \rbr{\overline{\cbr{ A_n \mathrel{i.o.} }}} = 0, \\
+\oppr \rbr{ A_n \mathrel{i.o.} } = 1.
 \end{gather}
 \hfill$\Box$
 
@@ -91,13 +91,13 @@ which has the expansion
 \begin{equation} \label{Eq:ExpMom}
 M \rbr{\mathbf{t}} = \sum_{ k = 0 }^{\infty} \frac{1}{ k ! 2^k } \rbr{ \mathbf{t}^{\text{T}} \bm{\Sigma} \mathbf{t} }^k.
 \end{equation}
-When $n$ is odd, there are no n-th order terms in \eqref{Eq:ExpMom}, not to mention $ t_1 t_2 \cdots t_n $. This means the moment $ \ope X_1 X_2 \cdots X_n $ vanishes. When $n$ is even, we know from combinatorics that coefficients of $ t_1 t_2 \cdots t_n $ in $ \rbr{ \mathbf{t}^{\text{T}} \bm{\Sigma} \mathbf{t} }^{ n / 2 } $ is exactly
+When $n$ is odd, there are no $n$-th order terms in \eqref{Eq:ExpMom}, not to mention $ t_1 t_2 \cdots t_n $. This means the moment $ \ope X_1 X_2 \cdots X_n $ vanishes. When $n$ is even, we know from combinatorics that coefficients of $ t_1 t_2 \cdots t_n $ in $ \rbr{ \mathbf{t}^{\text{T}} \bm{\Sigma} \mathbf{t} }^{ n / 2 } $ is exactly
 \begin{equation}
 \rbr{ n / 2 } ! 2^{ n / 2 } \sum \prod \Sigma_{ i j }.
 \end{equation}
 As a result, the moment
 \begin{equation}
-\ope X_1 X_2 \cdots X_n = \frac{ \rbr{ n / 2 } ! 2^{ n / 2 } }{ \rbr{ n / 2 } ! 2^{ n / 2 }} \sum \prod \Sigma_{ i j } = \sum \prod \Sigma_{ i j }.
+\ope X_1 X_2 \cdots X_n = \frac{ \text{coefficients of $ t_1 t_2 \cdots t_n $ in } \rbr{ \mathbf{t}^{\text{T}} \bm{\Sigma} \mathbf{t} }^{ n /2 } }{ \rbr{ n / 2 } ! 2^{ n / 2 } } = \sum \prod \Sigma_{ i j }.
 \end{equation}
 \hfill$\Box$
 
@@ -128,13 +128,13 @@ Similar to Problem 1, we deduce from \eqref{Eq:IODef} that
 \label{Fig:BinomPoi}
 \end{figure}
 
-From Figure \ref{Fig:BinomPoi}, it can be seen that $ \mathcal{B} \rbr{ n, p } $ converges to $ \mathcal{P} \rbr{\lambda} $ numerically.
+From Figure \ref{Fig:BinomPoi}, it can be seen that $ \mathcal{B} \rbr{ n, p } $ converges to $ \mathcal{P} \rbr{\lambda} $ numerically. The condition is $ n \rightarrow \infty $.
 
 We then investigate the second limiting process. We plot the probability mass function of $ \mathcal{P} \rbr{\lambda} $ and $ \mathcal{N} \rbr{ \lambda, \lambda } $ (we actually evaluate
 \begin{equation}
 p_i = \oppr \rbr{ i - \frac{1}{2} \le x < i + \frac{1}{2} }
 \end{equation}
-for the ``probability mass function'') in Figure \ref{Fig:PoiNorm}.
+for the ``probability mass function'' for $ \mathcal{N} \rbr{ \lambda, \lambda } $) in Figure \ref{Fig:PoiNorm}. The condition is $ n p = \lambda $ with $ n \rightarrow \infty $.
 
 \begin{figure}[htb]
 \centering
@@ -143,6 +143,6 @@ for the ``probability mass function'') in Figure \ref{Fig:PoiNorm}.
 \label{Fig:PoiNorm}
 \end{figure}
 
-Convergence can also be seen in Figure \ref{Fig:PoiNorm}.
+Convergence can also be seen in Figure \ref{Fig:PoiNorm}. The condition is $ \lambda \rightarrow \infty $.
 
 \end{document}

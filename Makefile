@@ -1,10 +1,18 @@
 DIRS = $(shell ls -d */ | grep -v ptmpls)
 
 .PHONY: all
-all: recursive environment.yml
+all: hardware.txt environment.yml recursive
+
+hardware.txt:
+	echo 'lscpu:' > hardware.txt
+	lscpu >> hardware.txt
+	echo 'lsmem:' >> hardware.txt
+	lsmem >> hardware.txt
+	echo 'uname -a:' >> hardware.txt
+	uname -a | awk '$$2="********"' >> hardware.txt
 
 environment.yml:
-	conda env export > environment.yml
+	conda env export | grep -v prefix > environment.yml
 
 .PHONY: recursive
 recursive: template
@@ -19,4 +27,4 @@ template:
 
 .PHONY: environment
 environment: environment.yml
-	conda env create -f envorinment.yml
+	conda env create -f environment.yml

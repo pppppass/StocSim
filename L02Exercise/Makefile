@@ -1,17 +1,25 @@
+PGFOBJS = Figure1.pgf Figure2.pgf
+RUNOBJS = Problem7.run
+
 .PHONY: all
 all: Answer.pdf
 
-Answer.pdf: Answer.tex Figure1.pgf
+Answer.pdf: Answer.tex $(PGFOBJS) | Answer.aux
 	lualatex Answer.tex
 
-Figure1.pgf: Problem7.py
-	python Problem7.py
+Answer.aux: Answer.tex
+	lualatex Answer.tex
 
+.PRECIOUS: %.py
 %.py: %.ipynb
 	jupyter nbconvert --to script $*
+
+%.run: %.py
+	python $<
+	touch $@
 
 .PHONY: report
 report: Answer.pdf
 
 .PHONY: run
-run: Figure1.pgf
+run: $(RUNOBJS)
