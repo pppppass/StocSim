@@ -73,7 +73,9 @@ We proceed to conduct quantitatively comparison. Some numerical results are reco
 \label{Tbl:Res}
 \end{table}
 
-The disadvantange of the $Z$--$T$ algorithm is that is does not generalize to higher dimension. Both ``Uniform'' and ``Gaussian'' generalize, while the former suffer from an increasing rejection rate because the volume of $d$-dimensional unit ball
+From the table, we can find that $Z$--$T$ algorithm is much faster. Small generation of Gaussian random variables accounts for the low efficiency of ``Gaussian''. Although ``Uniform'' takes less time than ``Gaussian'', it reject nearly half of the samples and the overall speed is therefore slower than ``Gaussian''.
+
+The disadvantage of the $Z$--$T$ algorithm is that is does not generalize to higher dimension. Both ``Uniform'' and ``Gaussian'' generalize, while the former suffer from an increasing rejection rate because the volume of $d$-dimensional unit ball
 \begin{equation}
 m \rbr{\mathbb{D}^d} \rightarrow 0 
 \end{equation}
