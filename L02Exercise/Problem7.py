@@ -34,7 +34,7 @@ def calc_poisson(lamda, pos):
 # In[4]:
 
 
-def calc_normal_disc(mu, sigma, pos, delta):
+def calc_gauss_disc(mu, sigma, pos, delta):
     m, s, x, d = mu, sigma, pos, delta
     rv = scipy.stats.norm(m, s)
     y = rv.cdf(pos + delta) - rv.cdf(pos - delta)
@@ -84,7 +84,7 @@ for i in range(len(l_list)):
     x = numpy.arange(int(l - 2.0 * numpy.sqrt(2.0 * l) + 0.5), int(l + 4.0 * numpy.sqrt(2.0 * l)) + 0.5)
     pyplot.subplot(2, 3, i+1)
     y1 = calc_poisson(l, x)
-    y2 = calc_normal_disc(l, numpy.sqrt(l), x, 0.5)
+    y2 = calc_gauss_disc(l, numpy.sqrt(l), x, 0.5)
     pyplot.plot(x, y1, color="C1", label="$ \mathcal{P} (\lambda) $")
     pyplot.plot(x, y2, color="C2", label="$ \mathcal{N} ( \lambda, \lambda ) $")
     if i == 5:

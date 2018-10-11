@@ -25,7 +25,7 @@ with shelve.open("Result") as db:
 # In[4]:
 
 
-pyplot.figure(figsize=(8.0, 2.5))
+pyplot.figure(figsize=(8.0, 3.0))
 pyplot.subplot(1, 3, 1, projection="3d", aspect="equal")
 p = numpy.load("Result1.npy")
 pyplot.gca().scatter(p[0], p[1], p[2], s=10)

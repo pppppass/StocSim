@@ -10,6 +10,9 @@ Answer.pdf: Answer.tex $(PGFOBJS) | Answer.aux
 Answer.aux: Answer.tex
 	lualatex Answer.tex
 
+$(PGFOBJS): $(wildcard $(RUNOBJS))
+	touch $@
+
 .PRECIOUS: %.py
 %.py: %.ipynb
 	jupyter nbconvert --to script $*
