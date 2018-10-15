@@ -10,7 +10,7 @@ Answer.pdf: Answer.tex $(PGFOBJS) | Answer.aux
 Answer.aux: Answer.tex
 	lualatex Answer.tex
 
-$(PGFOBJS): $(wildcard $(RUNOBJS)) Plot.py
+$(PGFOBJS): $(wildcard $(RUNOBJS)) $(if $(wildcard Result.dir), Plot.py)
 	python Plot.py
 	sed -i 's/<LABEL1~*>/Estimated $$ \\ope e_N^2 $$/' Figure1.pgf
 	sed -i 's/<LABEL2~*>/Estimated $$ \\ope \\abs{e_N} $$/' Figure2.pgf

@@ -12,7 +12,7 @@ Answer.aux: Answer.tex
 	lualatex Answer.tex
 
 .SECONDEXPANSION:
-$(PGFOBJS) $(TBLOBJS): $(wildcard $(RUNOBJS)) Plot.py
+$(PGFOBJS) $(TBLOBJS): $(wildcard $(RUNOBJS)) $(if $(wildcard Result.dir), Plot.py)
 	python Plot.py
 
 .PRECIOUS: %.py

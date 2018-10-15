@@ -2,11 +2,11 @@
 %! TeX program = LuaLaTeX
 
 \documentclass[english, nochinese]{pnote}
+\usepackage{siunitx}
 \usepackage[paper, cgu]{pdef}
 \usepackage{pgf}
 
 \DeclareMathOperator\oppr{\mathrm{Pr}}
-\DeclareMathOperator\ope{\mathrm{E}}
 
 \title{Answers to Exercises (Lecture 03)}
 \author{Zhihan Li, 1600010653}
@@ -21,7 +21,7 @@
 R = \sqrt{ 1 - Z^2 }
 \end{equation}
 and
-\begin{gather}r
+\begin{gather}
 X = R \cos T, \\
 Y = R \sin T.
 \end{gather}
@@ -36,7 +36,7 @@ R = \sqrt{ X^2 + Y^2 + Z^2 }.
 \end{equation}
 Then samples with $ R \ge 1 $ is rejected and
 \begin{equation}
-\rbr{ X / R, Y / R, Z / R }
+\rbr{ \frac{X}{R}, \frac{Y}{R}, \frac{Z}{R} }
 \end{equation}
 turns out to be uniform distribution on the sphere. The correctness can be proved by noting that the accepted $ \rbr{ X, Y, Z } $ are actually of the uniform distribution in the sphere, and the normalization step is spherically symmetric. A slightly modified algorithm can also be proposed and we call it ``Gaussian''. We sample $ X, Y, Z \sim \mathcal{N} \rbr{ 0, 1 } $ i.i.d. and then normalize them to get final samples. Here $ \rbr{ X, Y, Z } \sim \mathcal{N} \rbr{ \mathbf{0}, \mathbf{I}_3 } $ is already of spherical symmetry.
 
@@ -75,9 +75,9 @@ We proceed to conduct quantitatively comparison. Some numerical results are reco
 
 From the table, we can find that $Z$--$T$ algorithm is much faster. Small generation of Gaussian random variables accounts for the low efficiency of ``Gaussian''. Although ``Uniform'' takes less time than ``Gaussian'', it reject nearly half of the samples and the overall speed is therefore slower than ``Gaussian''.
 
-The disadvantage of the $Z$--$T$ algorithm is that is does not generalize to higher dimension. Both ``Uniform'' and ``Gaussian'' generalize, while the former suffer from an increasing rejection rate because the volume of $d$-dimensional unit ball
+The disadvantage of the $Z$--$T$ algorithm is that is does not generalize to higher dimension. Both ``Uniform'' and ``Gaussian'' generalize, while the former suffer from an increasing rejection rate because the relative size of $d$-dimensional unit ball with respect to the $d$-dimensional box
 \begin{equation}
-m \rbr{\mathbb{D}^d} \rightarrow 0 
+\frac{ m \rbr{\mathbb{D}^d} }{ m \rbr{\sbr{ -1, 1 }^d} } \rightarrow 0 
 \end{equation}
 as $ d \rightarrow \infty $.
 
@@ -88,7 +88,7 @@ as $ d \rightarrow \infty $.
 The overall acceptance probability is
 \begin{equation}
 \begin{split}
-&\ptrel{=} \oppr \rbr{ Y \le p \rbr{X} } = \ope_X \oppr \rbr{ Y \le p \rbr{X} \mvert X } \\
+&\ptrel{=} \oppr \rbr{ Y \le p \rbr{X} } = \int_{-\infty}^{\infty} \oppr \rbr{ Y \le p \rbr{X} \mvert X = x } \frac{1}{A} f \rbr{x} \sd x \\
 &= \int_{-\infty}^{\infty} \frac{ p \rbr{x} }{ f \rbr{x} } \frac{1}{A} f \rbr{x} \sd x = \frac{1}{A} \int_{-\infty}^{\infty} p \rbr{x} \sd x \\
 &= \frac{1}{A}.
 \end{split}
@@ -100,7 +100,7 @@ Hence, the overall rejection probability is
 
 \textbf{Problem 4.} \textit{Answer.} We have the marginal distribution of $X$ with respect to $ \rbr{ X, U } $ when conditioned acceptance is
 \begin{equation}
-q \rbr{ x \mvert \text{accepted} } = \frac{ q \rbr{ x, \text{accepted} } }{ \oppr \rbr{\text{accepted}} } = \frac{ g_m \rbr{x} p \rbr{x} / \rbr{ M g_m \rbr{x} } }{ \ope_X g_m \rbr{X} p \rbr{X} / \rbr{ M g_m \rbr{X} } } = p \rbr{x}
+q \rbr{ x \mvert \text{accepted} } = \frac{ q \rbr{ x, \text{accepted} } }{ \oppr \rbr{\text{accepted}} } = \frac{ g_m \rbr{x} p \rbr{x} / \rbr{ M g_m \rbr{x} } }{ \int_{-\infty}^\infty g_m \rbr{x} p \rbr{x} / \rbr{ M g_m \rbr{x} } \sd x } = p \rbr{x}
 \end{equation}
 and the correctness is proved. Compared to Algorithm 2.6, there are two distinctions. One minor is that in this algorithm $X$ is generated directly or say ``implicitly'' while in Algorithm 2.6 $X$ is generated using $ X = F^{-1} \rbr{ A Z } $, i.e., the inverse transformation method. The other one is that in this algorithm some hierarchical structure is introduced. In some cases the $p$ may be extremely expensive to evaluate and the $g_l$, which provides a estimation of lower bound of $p$, may helps filter out some of the samples and alleviate frequent evaluation of $p$.
 
