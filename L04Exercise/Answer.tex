@@ -1,0 +1,83 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage{siunitx}
+\usepackage[paper, cgu]{pdef}
+\usepackage{pgf}
+
+\DeclareMathOperator\opcov{\mathrm{Cov}}
+\DeclareMathOperator\ope{\mathrm{E}}
+\DeclareMathOperator\opvar{\mathrm{Var}}
+\DeclareMathOperator\opkl{\mathrm{KL}}
+
+\title{Answers to Exercises (Lecture 04)}
+\author{Zhihan Li, 1600010653}
+\date{October 18, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Proof.} We have
+\begin{equation}
+\begin{split}
+&\ptrel{=} \opcov \rbr{ f \rbr{X}, f \rbr{ 1 - X } } \\
+&= \ope_X \rbr{ \rbr{ f \rbr{X} - \overline{f} } \rbr{ f \rbr{ 1 - X } - \overline{f} } } \\
+&= \int_0^1 \rbr{ f \rbr{x} - \overline{f} } f \rbr{ 1 - x } \sd x
+\end{split}
+\end{equation}
+where
+\begin{equation}
+\overline{f} = \ope_X f \rbr{X} = \int_0^1 f \rbr{x} \sd x.
+\end{equation}
+Suppose $ f \rbr{x} - \overline{f} $ is monotonically increasing, and let
+\begin{equation}
+\xi = \mathop{\arg\min}_x \cbr{ f \rbr{x} - \overline{f} \ge 0 }.
+\end{equation}
+As a result, $ f \rbr{x} - \overline{f} \le 0 $ for $ x \in \sbr{ 0, \xi } $ and $\ge$ for $ \sbr{ \xi, 1 } $. Moreover,
+\begin{equation}
+-\int_0^{\xi} \rbr{ f \rbr{x} - \overline{f} } \sd x = \int_{\xi}^1 \rbr{ f \rbr{x} - \overline{f} } \sd x \ge 0.
+\end{equation}
+As a result,
+\begin{equation}
+\begin{split}
+&\ptrel{=} -\int_0^{\xi} \rbr{ f \rbr{x} - \overline{f} } f \rbr{ 1 - x } \sd x \\
+&\ge -\int_0^{\xi} \rbr{ f \rbr{x} - \overline{f} } \sd x f \rbr{ 1 - \xi } \\
+&= \int_{\xi}^1 \rbr{ f \rbr{x} - \overline{f} } \sd x f \rbr{ 1 - \xi } \\
+&\ge \int_{\xi}^1 \rbr{ f \rbr{x} - \overline{f} } f \rbr{ 1 - x } \sd x
+\end{split}
+\end{equation}
+and this yields
+\begin{equation}
+\int_0^1 \rbr{ f \rbr{x} - \overline{f} } f \rbr{ 1 - x } \sd x \le 0
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\textbf{Problem 2.} \textit{Proof.} We have
+\begin{equation}
+\begin{split}
+&\ptrel{=} \opvar_{\mathbf{X}^{\rbr{2}}} \ope_{\mathbf{X}^{\rbr{1}}} f \rbr{\mathbf{X}} + \ope_{\mathbf{X}^{\rbr{2}}} \opvar_{\mathbf{X}^{\rbr{1}}} f \rbr{\mathbf{X}} \\
+&= \ope_{\mathbf{X}^{\rbr{2}}} \rbr{ \ope_{\mathbf{X}^{\rbr{1}}} f \rbr{\mathbf{X}} }^2 - \rbr{ \ope_{\mathbf{X}^{\rbr{2}}} \ope_{\mathbf{X}^{\rbr{1}}} f \rbr{X} }^2 \\
+&+ \ope_{\mathbf{X}^{\rbr{2}}} \ope_{\mathbf{X}^{\rbr{1}}} f \rbr{\mathbf{X}}^2 - \ope_{\mathbf{X}^{\rbr{2}}} \rbr{ \ope_{\mathbf{X}^{\rbr{1}}} f \rbr{\mathbf{X}} }^2 \\
+&= \ope_{\mathbf{X}} f \rbr{\mathbf{X}}^2 - \rbr{ \ope_{\mathbf{X}} f \rbr{\mathbf{X}} }^2 \\
+&= \opvar_{\mathbf{X}} f \rbr{\mathbf{X}}.
+\end{split}
+\end{equation}
+\hfill$\Box$.
+
+\textbf{Problem 3.} \textit{Proof.} Since $ \ln x $ is concave and
+\begin{equation} \label{Eq:Norm}
+\int f = \int g = 1,
+\end{equation}
+\begin{equation}
+\opkl \rbr{ f \mnorm g } = \int f \ln \frac{f}{g} = -\int f \ln \frac{g}{f} \ge \ln \int f \frac{g}{f} = 0.
+\end{equation}
+The equality is attained iff $ g / f $ is a constant \textit{a.e.}, combing which and \eqref{Eq:Norm} it follows
+\begin{equation}
+f = g \mathrel{a.e.}.
+\end{equation}
+\hfill$\Box$
+
+\end{document}
