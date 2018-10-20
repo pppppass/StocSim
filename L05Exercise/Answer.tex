@@ -1,0 +1,265 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 05)}
+\author{Zhihan Li, 1600010653}
+\date{October 20, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} Denote $X_j^{\epsilon}$ to be $ \max{ X_j, \epsilon } $. By simple calculus
+\begin{equation}
+\ope X_j^{ \epsilon, -1 } = 1 + \ln \frac{1}{\epsilon}.
+\end{equation}
+As a result, according to Kolmogorov's strong law of large numbers with probability one,
+\begin{equation}
+\lim_{ n \rightarrow \infty } \frac{ \sum_{ j = 1 }^n X_j^{ \epsilon, -1 } }{n} = 1 + \ln \frac{1}{\epsilon}
+\end{equation}
+and as a result
+\begin{equation*}
+0 \le \lim_{ n \rightarrow \infty } \frac{n}{ \sum_{ j = 1 }^n X_j^{-1} } \le \lim_{ n \rightarrow \infty } \frac{n}{ \sum_{ j = 1 }^n X_j^{ \epsilon, -1 } } = \frac{1}{ 1 + \ln 1 / \epsilon }.
+\end{equation*}
+Letting $ \epsilon \rightarrow 0^+ $, we knows that with probability one,
+\begin{equation}
+\lim_{ n \rightarrow \infty } \frac{n}{ \sum_{ j = 1 }^n X_j^{-1} } = 0.
+\end{equation}
+
+We have
+\begin{gather}
+\ope \ln X_j = -1, \\
+\ope X_j^2 = \frac{1}{3}.
+\end{gather}
+According to Kolmogorov's strong law of large numbers, with probability one
+\begin{gather}
+\lim_{ n \rightarrow \infty } \frac{1}{n} \sum_{ j = 1 }^n \ln X_j = -1, \\
+\lim_{ n \rightarrow \infty } \frac{1}{n} \sum_{ j = 1 }^n X_j^2 = \frac{1}{3}
+\end{gather}
+and as a result
+\begin{gather}
+\lim_{ n \rightarrow \infty } \sqrt[n]{ \prod_{ j = 1 }^n X_j } = \se^{-1}, \\
+\lim_{ n \rightarrow \infty } \sqrt{ \frac{1}{n} \sum_{ j = 1 }^n X_j^2 } = \frac{\sqrt{3}}{3}.
+\end{gather}
+
+\textbf{Problem 2.} \textit{Answer.} (a). Since
+\begin{equation}
+\begin{split}
+Z_{ 2 n } &= \frac{ X_1 + \cdots + X_{ 2 n } }{\sqrt{ 2 n }} \\
+&= \frac{1}{\sqrt{2}} \rbr{ \frac{ X_1 + \cdots + X_n }{\sqrt{n}} + \frac{ X_{ n + 1 } + \cdots + x_{ 2 n } }{\sqrt{n}} } \\
+&\rightarrow \frac{1}{\sqrt{2}} \rbr{ X +_{\text{ind}} X }
+\end{split}
+\end{equation}
+in distribution (here $+_{\text{ind}}$ stands for the sum of two independent random variables). This implies $X$ has the same distribution as $ \rbr{ X +_{\text{ind}} X } / \sqrt{2} $. As a result,
+\begin{equation}
+f \rbr{\xi} = \ope_X \se^{ \si \xi X } = \rbr{ \ope_X \se^{ \si \xi X / \sqrt{2} } }^2 = f^2 \rbr{\frac{\xi}{\sqrt{2}}}.
+\end{equation}
+
+(b). Since $ f \in C^2 \rbr{\mathbb{R}} $ and $ f \rbr{1} = 1 $, it follows that $ f \rbr{\xi} 0 $ for all $\xi$. Set $ g \rbr{\xi} = \ln f \rbr{\xi} $ (where the complex arguments are chosen such that $g$ is continuous), and we get
+\begin{equation}
+g \rbr{\xi} = 2 g \rbr{ \xi / \sqrt{2} } + 2 k_{\xi} \spi \si
+\end{equation}
+with $ k_{\xi} \in \mathbb{Z} $. According to the continuity of $g$, $k_{\xi}$ is a constant. As a result,  
+\begin{equation}
+g'' \rbr{\xi} = g'' \rbr{ \xi / \sqrt{2} }.
+\end{equation}
+Since $f$ is $C^2$, $g$ is also $C^2$ and therefore
+\begin{gather}
+g'' \rbr{\xi} = g'' \rbr{0} := -\sigma^2, \\
+g \rbr{\xi} = A + B \xi - \frac{1}{2} \sigma^2 \xi^2, \\
+f \rbr{\xi} = \exp \rbr{ A + B \xi - \frac{1}{2} \sigma \xi^2 }.
+\end{gather}
+Since $ f \rbr{0} = 0 $, $ \abs{ f \rbr{\xi} } \le 1 $ and $ \ope X = -\si f' \rbr{0} = 0 $, we deduce $ A = B = 0 $, $ \sigma^2 \ge 0 $ and
+\begin{equation}
+f \rbr{\xi} = -\exp \rbr{ -\frac{1}{2} \sigma^2 \xi^2 },
+\end{equation}
+i.e., the characteristic function of $ \mathcal{N} \rbr{ 0, \sigma^2 } $.
+
+(c). The equation is
+\begin{equation}
+f \rbr{\xi} = f^2 \rbr{\frac{\xi}{2}}
+\end{equation}
+according to similar argument. Moreover, we can get
+\begin{equation}
+f \rbr{\xi} = f^m \rbr{\frac{\xi}{m}}
+\end{equation}
+by grouping every $m$ variables. Combined with $ f \rbr{\xi} = \overline{ f \rbr{-\xi} } $, the symmetric condition $ f \rbr{\xi} = f \rbr{-\xi} $ yields $ f \rbr{\xi} \in \mathbb{R} $. Because $ f \rbr{0} = 1 $ and $f$ is continuous, $ f \rbr{\xi} > 0 $. Therefore we can safely set $ g = \ln f \rbr{\xi} $ with
+\begin{equation}
+g \rbr{\xi} = m g \rbr{\frac{\xi}{m}}.
+\end{equation}
+By the theory of Cauchy's functional equation, we can extend $m$ from naturals to positive rationals $ p / q $ by
+\begin{equation}
+g \rbr{\xi} = p g \rbr{\frac{\xi}{p}} = p g \rbr{ \frac{1}{q} \frac{ q \xi}{p} } =  \frac{p}{q} g \rbr{\frac{ q \xi }{p}}.
+\end{equation}
+According to the continuity of $g$, we deduce
+\begin{equation}
+g \rbr{\xi} = \xi g \rbr{1}
+\end{equation}
+for all positive reals $\xi$. Denote $ g \rbr{1} = -\gamma $, we knows
+\begin{equation}
+g \rbr{\xi} = -\gamma \abs{\xi}
+\end{equation}
+for some $ \gamma \ge 0 $ and all $ \xi \in \mathbb{R} $, which means
+\begin{equation}
+f \rbr{\xi} = \exp \rbr{ -\gamma \abs{\xi} },
+\end{equation}
+i.e., the characteristic function of Cauchy distribution with scale $\gamma$ (or Dirac delta distribution when $ \gamma = 0 $, $ f \equiv 1 $).
+
+It is a much harder question whether simply utilizing $ m = 2 $ leads to the same conclusion, which the statement of problem implies. However, the answer turns out to be negative and thus the problem it self is somehow misleading. A counter-example is shown as follows. Let
+\begin{equation}
+\psi \rbr{\xi} = \cos \xi - 1.
+\end{equation}
+Note that
+\begin{equation}
+\phi = \se^{ \psi \rbr{\xi} } = \bfrac{ \sum_{ k = 0 }^{\infty} \frac{1}{ k ! } \cos^k \xi }{ \sum_{ k = 0 }^{\infty} \frac{1}{ k ! } }
+\end{equation}
+is a characteristic function since the set of probability distributions is convex and the L\'evy continuity theorem applies. Because
+\begin{equation}
+\psi^{\ast} \rbr{\xi} = \sum_{ k = -\infty }^{\infty} \frac{1}{2^k} \psi \rbr{ 2^k \xi }
+\end{equation}
+converges uniformly in any finite intervals (the $\infty$ side is obvious and the $-\infty$ side is resulted from $ \psi \rbr{\xi} \sim -\xi^2 / 2 $ for small $\xi$), we deduce
+\begin{equation}
+\phi^{\ast} \rbr{\xi} = \se^{ \psi^{\ast} \rbr{\xi} } = \prod_{ k = -\infty }^{\infty} \exp \rbr{ \frac{1}{2^k} \psi \rbr{ 2^k \xi } }
+\end{equation}
+is a characteristic function again from L\'evy continuity theorem. One may verify $\psi^{\ast}$ satisfies
+\begin{equation}
+\psi^{\ast} \rbr{\xi} = 2 \psi^{\ast} \rbr{\frac{\xi}{2}}
+\end{equation}
+and $ \psi \rbr{\xi} \neq -\gamma \abs{\xi} $.
+
+
+(d). Identical technique in (c) yields
+\begin{equation}
+g \rbr{\xi} = \xi^{ 1 / \alpha } g \rbr{1}
+\end{equation}
+without any assumption about smoothness as in (b). We need $ \alpha \ge 0 $ to keep the continuity of $g$. The case $ \alpha = 0 $ is trivial because this implies $ f \equiv 1 $. When $ \alpha \in \rbr{ 0, 1 / 2 } $, we deduce $ f'' \rbr{0} = 0 $ and the variance is zero. However, this again directly implies the distribution is Dirac delta and therefore $ f \equiv 1 $. For $ \alpha \ge 1 / 2 $, denote $ g \rbr{1} = -c \le 0 $, and therefore
+\begin{equation}
+f \rbr{\xi} = \exp \rbr{ -c \abs{\xi}^{ 1 / \alpha } }.
+\end{equation}
+It remains to prove that $ f \rbr{\xi} $ is a characteristic function. Let
+\begin{equation}
+\phi \rbr{\xi} = 1 - \rbr{ 1 - \cos \xi }^{ 1 / 2 \alpha } = \sum_{ k = 1 }^{\infty} \binom{ 1 / 2 \alpha }{k} \rbr{-1}^{ k + 1 } \cos^k \xi.
+\end{equation}
+Since
+\begin{gather}
+\binom{ 1 / 2 \alpha }{k} \rbr{-1}^{ k + 1 } \ge 0, \\
+\sum_{ k = 1 }^{\infty} \binom{ 1 / 2 \alpha }{k} \rbr{-1}^{ k + 1 } = 1,
+\end{gather}
+$\phi$ is a characteristic function. Applying L\'evy continuity theorem,
+\begin{equation}
+\exp \rbr{-\abs{\xi}^{ 1 / \alpha }} = \lim_{ k \rightarrow \infty }{ \phi^k \rbr{ \xi 2^{\alpha} k^{-\alpha} } }
+\end{equation}
+is a characteristic function. By scaling, $f$ is also a characteristic function.
+
+The proof is inspired by \emph{Probability: Theory and Examples} by Durrett (2013).
+
+To sum up, only $ \alpha \ge 1 / 2 $ leads to non-trivial (not Dirac delta) distributions.
+
+\textbf{Problem 3.} \textit{Proof.} The characteristic function of Cauchy distribution is
+\begin{equation}
+f \rbr{\xi} = \exp \rbr{-\abs{\xi}}.
+\end{equation}
+That $ \ope \abs{X_j} = \infty $ and $ \ope \abs{X_j}^2 = \infty $ can be verified by
+\begin{gather}
+\int_0^{\infty} \frac{x}{ \spi \rbr{ 1 + x^2 } } \sd x = \nvbr{ \frac{1}{ 2 \spi } \ln \rbr{ 1 + x^2 } }_0^{\infty} = \infty, \\
+\int_0^{\infty} \frac{x^2}{ \spi \rbr{ 1 + x^2 } } \sd x \ge \frac{1}{\spi} \int_1^{\infty} \frac{ 1 / 2 + x^2 / 2 }{ 1 + x^2 } \sd x = \infty.
+\end{gather}
+The stability of $X_j$ can be verified by
+\begin{equation}
+f^n \rbr{\frac{\xi}{n}} = \exp \rbr{ -\abs{\xi} } = f \rbr{ \xi },
+\end{equation}
+where the left hand side is the characteristic function of $ S_n / n $. This implies $ S_n / n $ has the same distribution as $X_j$.
+\hfill$\Box$
+
+\textbf{Problem 4.} \textit{Proof.} Without loss of generality we assume $ h \rbr{0} = 0 $. For $ \epsilon > 0 $, there exists $ \delta > 0 $, such that
+\begin{equation}
+\abs{ \alpha \rbr{x} } \le \epsilon
+\end{equation}
+for $ 0 \le x \le \delta $, where
+\begin{equation}
+h \rbr{x} = h' \rbr{0} x + \alpha \rbr{x} x.
+\end{equation}
+We have
+\begin{equation}
+\int_0^{\infty} \exp \rbr{ t h \rbr{x} } \sd x = \int_0^{\delta} \exp \rbr{ t h' \rbr{0} x + t \alpha \rbr{x} x } \sd x + \int_{\delta}^{\infty} \exp \rbr{ t h \rbr{x} } \sd x.
+\end{equation}
+For the first part, we know
+\begin{equation}
+\int_0^{\delta} \exp \rbr{ t h' \rbr{0} x + t \alpha \rbr{x} x } \sd x = \frac{ 1 - \exp \rbr{ t \rbr{ h' \rbr{0} + \mu_t } \delta }}{ -t \rbr{ h' \rbr{0} + \mu_t } }
+\end{equation}
+with
+\begin{equation}
+\abs{\mu_t} \le \sup_{ 0 \le x \le \delta } \abs{ \alpha \rbr{x} } \le \epsilon.
+\end{equation}
+This implies
+\begin{equation}
+\begin{split}
+&\ptrel{\le} \abs{ \int_0^{\delta} \exp \rbr{ t h \rbr{x} } \sd x - \frac{1}{ -t h' \rbr{0} } } \\
+&\le \sup_{ \abs{\mu} \le \epsilon } \abs{ \frac{ 1 - \exp \rbr{ t \rbr{ h' \rbr{0} + \mu_t } \delta }}{ -t \rbr{ h' \rbr{0} + \mu_t } } - \frac{1}{ -t h' \rbr{0} } } \\
+&\le \rbr{ \frac{\epsilon}{ -t h' \rbr{0} \rbr{ -h' \rbr{0} - \epsilon } } + \frac{ \exp \rbr{ t \rbr{ h' \rbr{0} + \epsilon } \delta } }{ -t \rbr{ h' \rbr{0} + \epsilon } } }
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\varlimsup_{ t \rightarrow +\infty } \abs{ t \int_0^{\delta} \exp \rbr{ t h \rbr{x} } \sd x - \frac{1}{ -h' \rbr{0} } } \le \frac{\epsilon}{ -h' \rbr{0} \rbr{ -h' \rbr{0} - \epsilon } }.
+\end{equation}
+For the second part, we define
+\begin{equation}
+A := \sup_{ x \ge \delta } h \rbr{x} < 0,
+\end{equation}
+and as a result for $ t > 16 A^2 / \se^2 + 1 $,
+\begin{equation}
+t \exp \rbr{ t h \rbr{x} } \le \exp \rbr{ h \rbr{x} }
+\end{equation}
+for $ x \ge \delta $. Hence, dominated convergence theorem applies and
+\begin{equation}
+\lim_{ t \rightarrow +\infty } t \int_{\delta}^{\infty} \exp \rbr{ t h \rbr{x} } \sd x = \int_{\delta}^{\infty} \sd x \lim_{ t \rightarrow +\infty } t \exp \rbr{ t h \rbr{x} } = 0.
+\end{equation}
+Combination of these two parts results in
+\begin{equation}
+\varlimsup_{ t \rightarrow +\infty } \abs{ t \int_0^{\infty} \exp \rbr{ t h \rbr{x} } \sd x - \frac{1}{ -h' \rbr{0} } } \le \frac{\epsilon}{ -h' \rbr{0} \rbr{ -h' \rbr{0} - \epsilon } }.
+\end{equation}
+and putting $ \epsilon \rightarrow 0^+ $ yields
+\begin{equation}
+\int_0^{\infty} \exp \rbr{ t h \rbr{x} } \sd x = \frac{1}{ -t h' \rbr{0} } + o \rbr{\frac{1}{t}}.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 5.} \textit{Answer.} The cumulant generating function of $ \mathcal{N} \rbr{ \mu, \sigma^2 } $ is
+\begin{equation}
+\Lambda \rbr{\lambda} = \mu \lambda + \frac{1}{2} \sigma^2 \lambda^2.
+\end{equation}
+Its Legendre--Fenchel conjugate is
+\begin{equation}
+I \rbr{x} = -\frac{1}{ 2 \sigma^2 } \rbr{ x - \mu }^2.
+\end{equation}
+
+The cumulant generating function of $ \mathcal{E} \rbr{\alpha} $ is
+\begin{equation}
+\Lambda \rbr{\lambda} =
+\begin{cases}
+\log \frac{\alpha}{ \alpha - \lambda }, & \alpha < \lambda; \\
++\infty, & \alpha \ge \lambda.
+\end{cases}
+\end{equation}
+Its Legendre--Fenchel conjugate is
+\begin{equation}
+I \rbr{x} =
+\begin{cases}
++\infty, & x \le 0; \\
+\alpha x - 1 - \log \rbr{ \alpha x }, & x > 0.
+\end{cases}
+\end{equation}
+This can be seen as follows. Since $\Lambda$ is strictly increasing and not bounded below at $-\infty$, $ x \lambda - \Lambda \rbr{\lambda} $ is not bounded above at $-\infty$ for $ x \le 0 $ and hence $ I \rbr{x} = +\infty $. For $ x > 0 $, $ x \lambda - \Lambda \rbr{\lambda} $ is concave and differentiating it gives
+\begin{equation}
+x - \frac{1}{ \alpha - \lambda } = 0.
+\end{equation}
+Plugging in and the result follows.
+
+\end{document}
+
