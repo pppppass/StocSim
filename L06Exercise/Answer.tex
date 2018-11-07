@@ -1,0 +1,133 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\DeclareMathOperator\oppr{\mathrm{Pr}}
+
+\title{Answers to Exercises (Lecture 06)}
+\author{Zhihan Li, 1600010653}
+\date{November 4, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} Since the transition matrix is
+\begin{equation}
+P = \msbr{ & 1 & & & & & \\ 1 / N & & \rbr{ N - 1 } / N & & & & \\ & 2 / N & & \rbr{ N - 2 } / N & & & \\ & & 3 / N & & \ddots & & \\ & & & \ddots & & 2 / N & \\ & & & & \rbr{ N - 1 } / N & & 1 / N \\ & & & & & 1 & },
+\end{equation}
+the equation
+\begin{equation}
+\pi P = \pi
+\end{equation}
+gives
+\begin{equation}
+\begin{cases}
+\pi_0 = \pi_1 / N; \\
+\pi_1 = N \pi_0 / N + 2 \pi_2 / N; \\
+\pi_2 = \rbr{ N - 1 } \pi_1 / N + 3 \pi_3 / N; \\
+\vdots \\
+\pi_{ N - 1 } = 2 \pi_{ N - 2 } / N + N \pi_N / N; \\
+\pi_N = \pi_{ N - 1 } / N.
+\end{cases}
+\end{equation}
+This equation yields
+\begin{equation}
+\pi_k = \binom{n}{k} \pi_0
+\end{equation}
+for $ 0 \le k \le n $. Normalization equation
+\begin{equation}
+\pi 1 = 1
+\end{equation}
+yields
+\begin{equation}
+\pi_k = \frac{1}{2^n} \binom{n}{k}.
+\end{equation}
+
+\textbf{Problem 2.} \textit{Answer.} Denote the characteristic function of $X_t$ to be $ f_t \rbr{s} $. According to the independence and stability of increments, we have for any $ h_1, h_2, \cdots, h_n > 0 $,
+\begin{equation}
+f_{ h_1 + h_2 + \cdots + h_n } = f_{h_1} f_{h_2} \cdots f_{h_n}.
+\end{equation}
+This means
+\begin{equation}
+f_t \rbr{s} = \rbr{ f_{ t / n } \rbr{s} }^n.
+\end{equation}
+It follows from the hypothesis of $X_t$ that
+\begin{equation}
+\begin{split}
+f_{ t / n } \rbr{s} &= \rbr{ 1 - \lambda \frac{t}{n} + o \rbr{\frac{1}{n}} } + \rbr{ \lambda \frac{t}{n} + o \rbr{\frac{1}{n}} } \se^{ \si s } + o \rbr{h} \\
+&= 1 + \frac{1}{n} \lambda t \rbr{ \se^{ \si s } - 1 } + o \rbr{\frac{1}{n}}.
+\end{split}
+\end{equation}
+Hence, forcing $ n \rightarrow \infty $,
+\begin{equation}
+f_t \rbr{s} = \exp \rbr{ \lambda t \rbr{ \se^{ \si s } - 1 } },
+\end{equation}
+which is exactly the characteristic function of $ \mathcal{P} \rbr{ \lambda t } $. Inverse theorem applies and therefore $ X_t \sim \mathcal{P} \rbr{ \lambda t } $.
+
+\textbf{Problem 3.} \textit{Answer.} Denote the column vector of $ h_i \rbr{t} $ and $ f \rbr{i} $ to be $ h \rbr{t} $ and $f$ respectively. Since
+\begin{equation}
+h_i \rbr{t} = \sum_j p_{ i j } \rbr{t} f \rbr{j},
+\end{equation}
+we have
+\begin{equation}
+h \rbr{t} = P \rbr{t} f.
+\end{equation}
+Differentiating with respective to $h$ yields the equation
+\begin{equation}
+\dot{h} \rbr{t} = \dot{P} \rbr{t} f = Q P \rbr{t} f = Q h \rbr{t}.
+\end{equation}
+We may further add the equation
+\begin{equation}
+h \rbr{0} = f
+\end{equation}
+to define a initial value problem.
+
+\textbf{Problem 4.} \textit{Answer.} The distribution at $t$, say $X_t$, is the sum of $ t / \tau $ independent samples from $ \mathcal{B} \rbr{ 1, p } $. This means $ X_t \sim \mathcal{B} \rbr{ t / \tau, p } $. When we keep $ p / \tau = \lambda $ when $ \tau \rightarrow 0 $, we obtain that $ \mathcal{B} \rbr{ t / \tau, p } $ converges to $ \mathcal{P} \rbr{ \lambda t } $. In this case, the independence and stability can be passed from discrete settings to the continuous one. Hence, the limiting process is a Poission process intuitively.
+
+In conclusion, the condition we need intuitively is $ p = \lambda \tau $ with $ \tau \rightarrow 0 $.
+
+\textbf{Problem 5.} \textit{Answer.} The equation of $p_0$ is
+\begin{equation}
+p_0 \rbr{ t + h } = p_0 \rbr{t} \rbr{ 1 - \lambda \rbr{t} h + o \rbr{h} }
+\end{equation}
+and therefore
+\begin{equation}
+\dot{p}_0 \rbr{t} = -\lambda \rbr{t} p_0 \rbr{t}.
+\end{equation}
+Define
+\begin{equation}
+\Lambda \rbr{t} = \int_0^t \lambda \rbr{s} \sd s,
+\end{equation}
+and we derive from $ p_0 \rbr{0} = 0 $ that
+\begin{equation}
+p_0 \rbr{t} = \exp \rbr{ -\Lambda \rbr{t} }.
+\end{equation}
+Again from
+\begin{equation}
+p_{ k + 1 } \rbr{ t + h } = p_k \rbr{t} \rbr{ \lambda \rbr{t} h + o \rbr{h} } + p_{ k + 1 } \rbr{t} \rbr{ 1 - \lambda \rbr{t} h + o \rbr{h} } + o \rbr{h}
+\end{equation}
+or
+\begin{equation}
+\dot{p}_{ k + 1 } \rbr{t} = - \lambda \rbr{t} \rbr{ p_{ k + 1 } \rbr{t} - p_k \rbr{t} }
+\end{equation}
+we derive
+\begin{equation}
+p_k \rbr{t} = \frac{\rbr{ \Lambda \rbr{t} }^k}{ k ! } \exp \rbr{ -\Lambda \rbr{t} }.
+\end{equation}
+This is equivalent to $ X_t \sim \mathcal{P} \rbr{ -\Lambda \rbr{t} } $. For the waiting time, we consider $ t = 0 $ first. By noticing that
+\begin{equation}
+\oppr \cbr{ \mu_0 > s } = \oppr \cbr{ X_s = 0 } = \exp \rbr{ -\Lambda \rbr{s} },
+\end{equation}
+the density function of $\mu_0$ is
+\begin{equation}
+q_0 \rbr{s} = \lambda \rbr{s} \exp \rbr{ -\Lambda \rbr{s} }.
+\end{equation}
+Back to arbitrary $t$, it follows from independence of increments that
+\begin{equation}
+q_t \rbr{s} = \lambda \rbr{s} \exp \rbr{ -\int_t^s \lambda \rbr{u} \sd u } = \lambda \rbr{s} \exp \rbr{ -\Lambda \rbr{s} + \Lambda \rbr{t} }.
+\end{equation}
+
+\end{document}

@@ -14,17 +14,17 @@
 
 \maketitle
 
-\textbf{Problem 1.} \textit{Answer.} Denote $X_j^{\epsilon}$ to be $ \max{ X_j, \epsilon } $. By simple calculus
+\textbf{Problem 1.} \textit{Answer.} Define $X_j^{\epsilon}$ to be $ \max \cbr{ X_j, \epsilon } $. By simple calculus
 \begin{equation}
-\ope X_j^{ \epsilon, -1 } = 1 + \ln \frac{1}{\epsilon}.
+\ope \rbr{X_j^{ \epsilon}}^{-1} = 1 + \ln \frac{1}{\epsilon}.
 \end{equation}
 As a result, according to Kolmogorov's strong law of large numbers with probability one,
 \begin{equation}
-\lim_{ n \rightarrow \infty } \frac{ \sum_{ j = 1 }^n X_j^{ \epsilon, -1 } }{n} = 1 + \ln \frac{1}{\epsilon}
+\lim_{ n \rightarrow \infty } \frac{ \sum_{ j = 1 }^n \rbr{X_j^{ \epsilon}}^{-1} }{n} = 1 + \ln \frac{1}{\epsilon}
 \end{equation}
-and as a result
+and therefore
 \begin{equation*}
-0 \le \lim_{ n \rightarrow \infty } \frac{n}{ \sum_{ j = 1 }^n X_j^{-1} } \le \lim_{ n \rightarrow \infty } \frac{n}{ \sum_{ j = 1 }^n X_j^{ \epsilon, -1 } } = \frac{1}{ 1 + \ln 1 / \epsilon }.
+0 \le \lim_{ n \rightarrow \infty } \frac{n}{ \sum_{ j = 1 }^n X_j^{-1} } \le \lim_{ n \rightarrow \infty } \frac{n}{ \sum_{ j = 1 }^n \rbr{X_j^{ \epsilon}}^{-1} } = \frac{1}{ 1 + \ln 1 / \epsilon }.
 \end{equation*}
 Letting $ \epsilon \rightarrow 0^+ $, we knows that with probability one,
 \begin{equation}
@@ -44,8 +44,9 @@ According to Kolmogorov's strong law of large numbers, with probability one
 and as a result
 \begin{gather}
 \lim_{ n \rightarrow \infty } \sqrt[n]{ \prod_{ j = 1 }^n X_j } = \se^{-1}, \\
-\lim_{ n \rightarrow \infty } \sqrt{ \frac{1}{n} \sum_{ j = 1 }^n X_j^2 } = \frac{\sqrt{3}}{3}.
+\lim_{ n \rightarrow \infty } \sqrt{ \frac{1}{n} \sum_{ j = 1 }^n X_j^2 } = \frac{\sqrt{3}}{3}
 \end{gather}
+almost surely.
 
 \textbf{Problem 2.} \textit{Answer.} (a). Since
 \begin{equation}
@@ -60,7 +61,7 @@ in distribution (here $+_{\text{ind}}$ stands for the sum of two independent ran
 f \rbr{\xi} = \ope_X \se^{ \si \xi X } = \rbr{ \ope_X \se^{ \si \xi X / \sqrt{2} } }^2 = f^2 \rbr{\frac{\xi}{\sqrt{2}}}.
 \end{equation}
 
-(b). Since $ f \in C^2 \rbr{\mathbb{R}} $ and $ f \rbr{1} = 1 $, it follows that $ f \rbr{\xi} 0 $ for all $\xi$. Set $ g \rbr{\xi} = \ln f \rbr{\xi} $ (where the complex arguments are chosen such that $g$ is continuous), and we get
+(b). Since $ f \in C^2 \rbr{\mathbb{R}} $ and $ f \rbr{1} = 1 $, it follows that $ f \rbr{\xi} \neq 0 $ for all $\xi$. Set $ g \rbr{\xi} = \ln f \rbr{\xi} $ (where the complex arguments are chosen such that $g$ is continuous), and we get
 \begin{equation}
 g \rbr{\xi} = 2 g \rbr{ \xi / \sqrt{2} } + 2 k_{\xi} \spi \si
 \end{equation}

@@ -1,0 +1,93 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\DeclareMathOperator\oppr{\mathrm{Pr}}
+\DeclareMathOperator\operf{\mathrm{erf}}
+
+\title{Answers to Exercises (Lecture 07)}
+\author{Zhihan Li, 1600010653}
+\date{November 4, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} Denote the probability measure supported on $ \sbr{ -10, 10 } $
+\begin{equation}
+\sd \mu = \bfrac{ \exp \rbr{-\frac{x^2}{b}} \sd x }{ \int_{-10}^{10} \exp \rbr{-\frac{x^2}{b}} \sd x }.
+\end{equation}
+The fraction turns out to be
+\begin{equation}
+\bfrac{ \int_{-10}^{10} \exp \rbr{-\frac{x^2}{a}} \sd x }{ \int_{-10}^{10} \exp \rbr{-\frac{x^2}{b}} \sd x } = \int \exp \rbr{ \rbr{ -\frac{1}{a} + \frac{1}{b} } x^2 } \sd \mu.
+\end{equation}
+We first use Metropolis algorithm to sample from $\mu$. This can be achieved by using equi-probability proposal (randomly choose a point in $ \sbr{ -10, 10 } $) with decision matrix
+\begin{equation}
+A \rbr{ x \rightarrow x' } = \min \cbr{ 1, \exp \rbr{ \frac{ -\rbr{x'}^2 + x^2 }{b} } }.
+\end{equation}
+This means when $ \abs{x'} < \abs{x} $ the state is bound to change while the probability of changing is
+\begin{equation}
+\exp \rbr{ \frac{ -\rbr{x'}^2 + x^2 }{b} }
+\end{equation}
+otherwise. After generating the series $x^{\rbr{k}}$, we calculate
+\begin{equation}
+\frac{1}{k} \sum_{ l = 1 }^k \exp \rbr{ \rbr{ -\frac{1}{a} + \frac{1}{b} } \rbr{x^{\rbr{k}}}^2 }
+\end{equation}
+to approximate
+\begin{equation}
+\int \exp \rbr{ \rbr{ -\frac{1}{a} + \frac{1}{b} } x^2 }.
+\end{equation}
+The numerical result of $ a = 10 $ and $ b = 12 $ with $ k = 100000 $ is shown in Table \ref{Tbl:Res}. Note that the analytical value is
+\begin{equation}
+\bfrac{ \int_{-10}^{10} \exp \rbr{-\frac{x^2}{a}} \sd x }{ \int_{-10}^{10} \exp \rbr{-\frac{x^2}{b}} \sd x } = \frac{ \sqrt{a} \operf \rbr{ 10 / \sqrt{a} } }{ \sqrt{b} \operf \rbr{ 10 / \sqrt{b} } }.
+\end{equation}
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+Estimated & Analytical & Abs. Error & Rel. Error \\
+\hline
+\input{Table1.tbl}
+\end{tabular}
+\caption{Numerical result}
+\label{Tbl:Res}
+\end{table}
+
+
+\textbf{Problem 2.} \textit{Proof.} The detailed balance condition reads
+\begin{equation}
+\frac{ \oppr \cbr{ \sigma \rightarrow \sigma' } }{ \oppr \cbr{ \sigma' \rightarrow \sigma } } = \frac{ Q \rbr{ \sigma \rightarrow \sigma' } A \rbr{ \sigma \rightarrow \sigma' } }{ Q \rbr{ \sigma' \rightarrow \sigma } A \rbr{ \sigma' \rightarrow \sigma } } = \frac{ \pi \rbr{\sigma'} }{ \pi \rbr{\sigma} } = \se^{ -\beta \Delta H }.
+\end{equation}
+Since $ Q \rbr{ \sigma \rightarrow \sigma' } = Q \rbr{ \sigma' \rightarrow \sigma } $, it sufficient to verify
+\begin{equation}
+\frac{ A \rbr{ \sigma \rightarrow \sigma' } }{ A \rbr{ \sigma' \rightarrow \sigma } } = \se^{ -\beta \Delta H }.
+\end{equation}
+For the Metropolis algorithm, this can be verified by
+\begin{equation}
+\text{LHS} = \frac{\exp \rbr{ -\beta \Delta H }}{1} = \text{RHS}
+\end{equation}
+for $ H \ge 0 $ and
+\begin{equation}
+\text{LHS} = \frac{1}{\exp \rbr{ \beta \Delta H }} = \text{RHS}
+\end{equation}
+for $ H \le 0 $. For the Glauber dynamics, this can be verified by
+\begin{equation}
+\text{LHS} = \frac{\rbr{ 1 + \exp \rbr{ \beta \Delta H } }^{-1}}{\rbr{ 1 + \exp \rbr{ -\beta \Delta H } }^{-1}} = \se^{ -\beta \Delta H } = \text{RHS}.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 3.} \textit{Proof.} Since $ A \rbr{ \sigma \rightarrow \sigma' } > 0 $ for all $ \rbr{ \sigma, \sigma' } $, it is sufficient to verify $ Q \rbr{ \sigma \rightarrow \sigma' } $ is irreducible as a matrix if we want to prove
+\begin{equation}
+\oppr \cbr{ \sigma \rightarrow \sigma' } = Q \rbr{ \sigma \rightarrow \sigma' } A \rbr{ \sigma \rightarrow \sigma' }
+\end{equation}
+is irreducible as a matrix. When we choose the equi-probability proposal model, the matrix is irreducible because $ Q \rbr{ \sigma \rightarrow \sigma' } > 0 $ for any $ \rbr{ \sigma, \sigma' } $ and further $ Q \rbr{ \sigma \rightarrow \sigma' } Q \rbr{ \sigma' \rightarrow \sigma } > 0 $. If we stick to the single flip proposal model, for any $ \rbr{ \sigma, \sigma' } $, we may find a seris of $ \sigma_0 = \sigma, \sigma_1, \sigma_2, \cdots, \sigma_k = \sigma' $ such that $\sigma_i$ and $\sigma_j$ differs at only one stage. This means
+\begin{equation}
+Q \rbr{ \sigma_0 \rightarrow \sigma_1 } Q \rbr{ \sigma_1 \rightarrow \sigma_2 } \cdots Q \rbr{ \sigma_{ k - 1 } \rightarrow \sigma_k } > 0
+\end{equation}
+and therefore $Q$ is also irreducible.
+\hfill$\Box$
+
+\end{document}

@@ -10,7 +10,7 @@ Answer.pdf: Answer.tex $(PGFOBJS) | Answer.aux
 Answer.aux: Answer.tex
 	lualatex Answer.tex
 
-Figure1.pgf Figure2.pgf: $(wildcard $(RUNOBJS))
+Figure1.pgf Figure2.pgf: $(wildcard Problem7.run)
 	touch $@
 
 .PRECIOUS: %.py
