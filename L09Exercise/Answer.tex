@@ -1,0 +1,99 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Lecture 09)}
+\author{Zhihan Li, 1600010653}
+\date{November 7, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} There are only countable minimizers. We suppose the energy function $V$ has \emph{coercivity}, that is
+\begin{equation}
+\lim_{ x \rightarrow \infty } V \rbr{x} = +\infty.
+\end{equation}
+Under this assumption, the minimizers lie in a compact set $K$. If there are infinitely many minimizers, there exists a cluster point, which is still a minimizer and this goes against the isolation. Therefore, there are finitely many minimizers, say $ x_1, \cdots, x_n $. We also denote the minimal value to be $V_0$.
+
+We first show that the limiting distribution concentrates on the minimizers. It is sufficient to prove for any open set $O$ containing all the minimizers, as $ \beta \rightarrow +\infty $,
+\begin{equation} \label{Eq:Limit}
+\bfrac{ \int_O \exp \rbr{ -\beta V \rbr{x} } \sd x }{ \int_{\mathbb{R}^d} \exp \rbr{ -\beta V \rbr{x} } \sd x } \rightarrow 1.
+\end{equation}
+Since there are finitely many minimizers, we may find $\epsilon$ such that
+\begin{equation}
+B := \bigcup_{ i = 1 }^n B \rbr{ x_i, \epsilon } \subseteq O.
+\end{equation}
+We further assume for $ x \in B $, $ V \rbr{x} < V_0 + \delta $. Noticing that $ \mathbb{R}^d \setminus O $ is a closed set and $V$ is coercive, we may further assume $\epsilon$ is small enough such that
+\begin{equation}
+V_0 + \delta < \min_{ x \in \mathbb{R}^d \setminus O } V \rbr{x}.
+\end{equation}
+As a result,
+\begin{equation}
+\int_O \exp \rbr{ -\beta V \rbr{x} } \sd x > m \rbr{B} \exp \rbr{ -\beta V - \beta \delta }
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+&\ptrel{<} \bfrac{ \int_{ \mathbb{R}^d \setminus O } \exp \rbr{ -\beta V \rbr{x} } \sd x }{ \int_O \exp \rbr{ -\beta V \rbr{x} } \sd x } \\
+&< \int_{ \mathbb{R}^d \setminus O } \exp \rbr{ -\beta \rbr{ V - V_0 - \delta } } \sd x / m \rbr{B} \rightarrow 0
+\end{split}
+\end{equation}
+according to dominated convergence theorem. This proves \eqref{Eq:Limit}.
+
+The limiting distribution on $ x_1, x_2, \cdots, x_n $ is still unknown and we proceed to tackle some special cases. The argument above shows that the limit
+\begin{equation}
+\int_{\mathbb{R}^d} \exp \rbr{ -\beta V \rbr{x} } \sd x
+\end{equation}
+is only related to local behaviors of $V$ around $ x_1, x_2, \cdots, x_n $ under the assumption of smoothness and coercivity. Therefore, we may apply Laplace's asymptotic method here. In the following arguments, we assume $ V_0 = 0 $ for brevity. We only tackle the case $ d = 1 $ here.
+
+First we assume the minimizers $ x_1, x_2, \cdots, x_n $ are all second order, i.e. $ V'' \rbr{x_i} \neq 0 $. Directly applying Laplace's conclusion,
+\begin{equation}
+\int_{ B \rbr{ x_i, \epsilon } } \exp \rbr{ -\beta V \rbr{x} } \sd x \sim \sqrt{ 2 \spi } \frac{1}{\sqrt{ \beta V'' \rbr{x_i} }}.
+\end{equation}
+where $\epsilon$ is sufficiently small (such that there are no other minimizers in the ball). This means the limiting distribution is actually
+\begin{equation}
+\sum_{ i = 1 }^n \frac{ 1 / \sqrt{ V'' \rbr{x_i} } }{ \sum_{ j = 1 }^n 1 / \sqrt{ V'' \rbr{x_j} } } \delta_{x_i}.
+\end{equation}
+
+If there are $ 2 k $-th order minimizers, then
+\begin{equation}
+\int_{ B \rbr{ x_i, \epsilon } } \exp \rbr{ -\beta V \rbr{x} } \sd x \sim A_k \frac{1}{ \sqrt[ 2 k ]{ \beta V^{\rbr{ 2 k }} \rbr{x_i} } }
+\end{equation}
+where
+\begin{equation}
+A_k = \int_{\mathbb{R}} \exp \rbr{ -\frac{1}{ \rbr{ 2 k } ! } x^{ 2 k } } \sd x.
+\end{equation}
+This means higher order minimizers will dominate lower order ones. For example, if $ x_1, x_2, \cdots, x_m $ are $ 2 k $-th order minimizers and $ x_{ m + 1 }, \cdots, x_n $ are of lower orders, the limiting distribution is
+\begin{equation}
+\sum_{ i = 1 }^m \frac{ 1 / \sqrt[ 2 k ]{ V^{\rbr{ 2 k }} \rbr{x_i} } }{ \sum_{ j = 1 }^m 1 / \sqrt[ 2 k ]{ V^{\rbr{ 2 k }} \rbr{x_j} } } \delta_{x_i}.
+\end{equation}
+
+What about infinite order minimizers? An example is
+\begin{equation} \label{Eq:Path}
+V \rbr{x} = x^2 \exp \rbr{-\frac{1}{x^2}}.
+\end{equation}
+If
+\begin{equation}
+V \rbr{x} \sim V_i \rbr{ x - x_i }
+\end{equation}
+where $V_i$ is a smooth symmetric function strictly increasing on $ \srbr{ 0, +\infty } $, we may say intuitively
+\begin{equation}
+\begin{split}
+&\ptrel{\sim} \int_{ B \rbr{ x_i, \epsilon } } \exp \rbr{ -\beta V \rbr{x} } \sd x \\
+&\sim 2 \int_0^{\infty} \exp \rbr{ -\beta V_i \rbr{x} } \sd x \\
+&= 2 \beta \int_0^{\infty} V_i^{-1} \rbr{t} \se^{ -\beta t } \sd t.
+\end{split}
+\end{equation}
+This means the dominating order is controlled by $V_i^{-1}$. When $V$ is selected to be \eqref{Eq:Path}, we may find the order is greater than
+\begin{equation}
+\frac{1}{\sqrt{ \ln \beta }}
+\end{equation}
+and hence again it dominates finite order ones, whose orders are
+\begin{equation}
+\frac{1}{\sqrt[ 2 k ]{\beta}}.
+\end{equation}
+
+\end{document}
