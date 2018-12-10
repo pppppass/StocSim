@@ -1,0 +1,90 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\newcommand\noteas{\text{\textit{a.s.}}}
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 11)}
+\author{Zhihan Li, 1600010653}
+\date{November 28, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} We first observe by $ \ope \xi = 1 / 3 $ and strong law of large number that
+\begin{equation}
+\frac{S_{\fbr{ N t }}}{N} \rightarrow \frac{1}{3} t, \noteas.
+\end{equation}
+This means for any $ \alpha > 1 $, $ Z_t^N \rightarrow 0 $ almost surely and for $ \alpha < 1 $, $Z_t^N$ diverges almost surely. As a result, the only choice is $ \alpha = 1 $ and therefore $ Z_t = t / 3 $ is a deterministic process.
+
+\textbf{Problem 2.} \textit{Answer.} (a). Since for fixed $t$
+\begin{equation}
+W_t \sim \mathcal{N} \rbr{ 0, t },
+\end{equation}
+we have
+\begin{equation}
+\ope W_t^4 = 3 t^2.
+\end{equation}
+
+(b). We have
+\begin{equation}
+\begin{split}
+&\ptrel{=} \ope \rbr{ W_t - W_s + W_z }^2 \\
+&= t + s + z - 2 t \wedge s - 2 z \wedge s + 2 t \wedge z \\
+&=
+\begin{cases}
+t - s + z, & t \le s \le z; \\
+t - z + s, & t \le z \le s; \\
+-3 s + 3 t + z, & s \le t \le z; \\
+-3 s + 3 z + t, & s \le z \le t; \\
+z - t + s, & z \le t \le s; \\
+z - s + t, & z \le s \le t.
+\end{cases}
+\end{split}
+\end{equation}
+
+\textbf{Problem 3.} \textit{Answer.} We have
+\begin{equation}
+\begin{split}
+&\ptrel{=} \ope \exp \rbr{ -\frac{1}{2} X^{\text{T}} B X } \\
+&= \int \frac{1}{ \sqrt{ 2 \spi }^n \sqrt{ \det A } } \exp \rbr{ -\frac{1}{2} X^{\text{T}} A^{-1} X } \exp \rbr{ -\frac{1}{2} X^{\text{T}} B X } \\
+&= \frac{\sqrt{ \det C }}{\sqrt{ \det A }} \int \frac{1}{ \sqrt{ 2 \spi }^n \sqrt{ \det C } } \exp \rbr{ -\frac{1}{2} X^{\text{T}} C^{-1} X } \\
+&= \frac{1}{\sqrt{ \det A \det C^{-1} }} \\
+&= \frac{1}{\sqrt{ \det \rbr{ I + A B } }},
+\end{split}
+\end{equation}
+where $C$ is the positive definite matrix defined as
+\begin{equation}
+C^{-1} = A^{-1} + B.
+\end{equation}
+
+\textbf{Problem 4.} \textit{Proof.} We should only verify the equivalence between 1, 2 and 1$'$ and 2$'$. We assume 1 and 2 first. Since $W_t$ is a Gaussian process, $ \rbr{ W_s, W_{ s + t } } $ follows some Gaussian distribution and so is $ W_{ s + t } - W_s $. Since $ m \rbr{t} = 0 $, it is also of zero expectation. Since
+\begin{equation}
+\ope \rbr{ W_{ s + t } - W_s }^2 = s + t + s - 2 \rbr{s} = t,
+\end{equation}
+we deduce
+\begin{equation}
+W_{ s + t } - W_s \sim \mathcal{N} \rbr{ 0, t }.
+\end{equation}
+Similar arguments yields $ \rbr{ W_{t_0}, W_{t_1}, \cdots, W_{t_n} } $ follows some Gaussian distribution and so is $ \rbr{ W_{t_0}, W_{t_1} - W_{t_0}, \cdots, W_{t_n} - W_{t_{ n - 1 }} } $. Without loss of generality, we assume $ t_0 = 0 $ and may drop $W_{t_0}$ since it is deterministic zero. As a result, we have for $ i < j $
+\begin{equation}
+\ope \rbr{ W_{t_{ i + 1 }} - W_{t_i} } \rbr{ W_{t_{ j + 1 }} - W_{t_j} } = t_{ i + 1 } - t_i - t_{ i + 1 } + t_i = 0.
+\end{equation}
+This combined with Gaussian distribution tells the independence.
+
+We then assume 1$'$ and 2$'$. (We need to further assume $ W_0 = 0 $.) Since $ \rbr{ W_{t_0}, W_{t_1} - W_{t_0}, \cdots, W_{t_n} - W_{t_{ n - 1 }} } $ are independent and each entry follows some Gaussian distribution, the joint distribution is again a Gaussian distribution and so is $ \rbr{ W_{t_0}, W_{t_1}, \cdots, W_{t_n} } $. This means $W_t$ is a Gaussian process. Because
+\begin{equation}
+W_t \sim \mathcal{N} \rbr{ 0, t }
+\end{equation}
+for fixed $t$, the mean function $ m \rbr{t} = 0 $. Because for $ s \le t $
+\begin{equation}
+\ope W_s W_t = \ope W_s^2 + \ope W_s \rbr{ W_t - W_s } = s + 0 = s,
+\end{equation}
+the covariance function $ K \rbr{ s, t } = s \wedge t $ as desired.
+\hfill$\Box$
+
+\end{document}

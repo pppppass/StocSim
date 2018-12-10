@@ -1,0 +1,51 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\title{Answers to Exercises (Lecture 08)}
+\author{Zhihan Li, 1600010653}
+\date{November 28, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} The transition kernel is
+\begin{equation}
+P \rbr{ \rbr{ x, i } \rightarrow \rbr{ x', i' } } =
+\begin{cases}
+\alpha_0 T_i \rbr{ x \rightarrow x' }, & x' \neq x, i' = i; \\
+\rbr{ 1 - \alpha_0 } \alpha \rbr{ i \rightarrow i' } Q_x \rbr{ i \rightarrow i' }, & x' = x, i' \neq i; \\
+0, & x' \neq x, i' \neq i; \\
+\text{remainder}, & x' = x, i' = i,
+\end{cases}
+\end{equation}
+where
+\begin{equation}
+Q_x \rbr{ i \rightarrow i' } = \min \cbr{ 1, \frac{ \pi_{\text{st}} \rbr{ x, i' } \alpha \rbr{ i' \rightarrow i } }{ \pi_{\text{st}} \rbr{ x, i } \alpha \rbr{ i \rightarrow i' } } }
+\end{equation}
+is the decision matrix and the remainder keeps the probability normalized. To be exact, the remainder is
+\begin{equation}
+\alpha_0 T \rbr{ x \rightarrow x } + \rbr{ 1 - \alpha_0  } \rbr{ \alpha \rbr{ i \rightarrow i } + \sum_{ i' \neq i } \alpha \rbr{ i \rightarrow i' } \rbr{ 1 - Q_x \rbr{ i \rightarrow i' } } }.
+\end{equation}
+
+\textbf{Problem 2.} \textit{Answer.} The transition kernel of the parallel step is
+\begin{equation}
+P_1 \rbr{ \rbr{x_{\cdot}} \rightarrow \rbr{x'_{\cdot}} } = \prod_i Q_i \rbr{ x_i \rightarrow x'_i } A_i \rbr{ x_i \rightarrow x'_i },
+\end{equation}
+where $ Q_i \rbr{ x_i \rightarrow x'_i } $ is the proposal matrix at temperature $T_i$ and
+\begin{equation}
+    A_i \rbr{ x_i \rightarrow x'_i } = \min \cbr{ 1, \exp \rbr{ - \frac{ U \rbr{x'_i} - U \rbr{x_i} }{T_i} } }
+\end{equation}
+is the decision matrix of Metropolis algorithm. The transition kernel of swapping is
+\begin{equation}
+P_2 \rbr{ \rbr{x_{\cdot}} \rightarrow \rbr{x'_{\cdot}} } = \frac{1}{ L - 1 } 1_{ x'_{ i + 1 } = x_i, x'_i = x_{ i + 1 }, x'_j = x_j \rbr{ j \neq i, i + 1 } } \min \cbr{ 1, \frac{ \pi_i \rbr{x_{ i + 1 }} \pi_{ i + 1 } \rbr{x_i} }{ \pi_i \rbr{x_i} \pi_{ i + 1 } \rbr{x_{ i + 1 }} } }.
+\end{equation}
+The final transition kernel is
+\begin{equation}
+P \rbr{ \rbr{x_{\cdot}} \rightarrow \rbr{x'_{\cdot}} } = \alpha_0 P_1 \rbr{ \rbr{x_{\cdot}} \rightarrow \rbr{x'_{\cdot}} } + \rbr{ 1 - \alpha_0 } P_2 \rbr{ \rbr{x_{\cdot}} \rightarrow \rbr{x'_{\cdot}} }.
+\end{equation}
+
+\end{document}

@@ -1,0 +1,125 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\newcommand\noteas{\text{\textit{a.s.}}}
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 12)}
+\author{Zhihan Li, 1600010653}
+\date{December 9, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Proof.} We have
+\begin{gather}
+\ope X_t = 0 t = 0, \\
+\ope X_s x_t = s t \ope W_{ 1 / s } W_{ 1 / t } = s t \rbr{ \frac{1}{s} \wedge \frac{1}{t} } = s \wedge t,
+\end{gather}
+\begin{gather}
+\ope Y_t = \frac{1}{\sqrt{c}} 0 = 0, \\
+\ope Y_s Y_t = \frac{1}{c} \ope W_{ c s } W_{ c t } = \frac{1}{c} \rbr{ c s } \wedge \rbr{ c t } = s \wedge t,
+\end{gather}
+and
+\begin{gather}
+\ope Z_t = \ope W_T - \ope W_{ T - t } = 0 - 0 = 0, \\
+\begin{split}
+\ope Z_s Z_t &= \ope \rbr{ W_T - W_{ T - t } } \rbr{ W_T - W_{ t - s } } \\
+&= T - \rbr{ T - t } - \rbr{ T - s } + \rbr{ T - s } \wedge \rbr{ T - t } \\
+&= s \wedge t.
+\end{split}
+\end{gather}
+From the construction, we deduce $ t \mapsto X_t $, $ t \mapsto Y_t $ and $ t \mapsto Z_t $ are continuous with probability one. It remains to prove that $X_t$, $Y_t$ and $Z_t$ are Gaussian processes. For $X_t$ and $Y_t$, we easily observe that the joint distribution
+\begin{equation}
+\rbr{ X_{t_1}, X_{t_2}, \cdots, X_{t_m} } = \rbr{ t_1 X_{ 1 / t_1 }, t_2 X_{ 1 / t_2 }, \cdots, t_m X_{ 1 / t_m } }
+\end{equation}
+and
+\begin{equation}
+\rbr{ Y_{t_1}, Y_{t_2}, \cdots, Y_{t_m} } = \frac{1}{\sqrt{c}} \rbr{ X_{ c t_1 }, X_{ c t_2 }, \cdots, X_{ c t_m } }
+\end{equation}
+are Gaussian distribution due to linearity. For $Z_t$, we have
+\begin{equation}
+\rbr{ Z_{t_1}, Z_{t_2}, \cdots, Z_{t_m} } = W_T - \rbr{ W_{ T - t_1 }, W_{ T - t_2 }, \cdots, W_{ T - t_m } }
+\end{equation}
+is of Gaussian distribution since it can be linearly transformed from
+\begin{equation}
+\rbr{ W_{ T - t_1 }, W_{ T - t_2 }, \cdots, W_{ T - t_m }, W_T }.
+\end{equation}
+
+The finite dimensional distributions are identical because they are gaussian and the they share the covariance matrix by
+\begin{equation}
+\ope W_s W_t = \ope X_s X_t = \ope Y_s Y_t = \ope Z_s Z_t = s \wedge t.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 2.} \textit{Proof.} We have
+\begin{equation}
+X_{t_{ k + 1 }} - X_{t_k} \sim \mathcal{N} \rbr{ 0, 2^{-n} t }
+\end{equation}
+and the distribution among $k$ are independent. As a result,
+\begin{equation}
+2^n \rbr{ X_{t_{ k + 1 }} - X_{t_k} }^2 \sim t \chi^2
+\end{equation}
+are i.i.d. random variables with finite expectation
+\begin{equation}
+\ope 2^n \rbr{ X_{t_{ k + 1 }} - X_{t_k} }^2 = t.
+\end{equation}
+From strong law of large numbers, we have
+\begin{equation}
+\sum_k \rbr{ X_{t_{ k + 1 }} - X_{t_k} }^2 = \frac{ \sum_k 2^n \rbr{ X_{t_{ k + 1 }} - X_{t_k} }^2 }{2^n} \rightarrow t \noteas.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 3.} \textit{Answer.} Here $d$ is indeed a metric since
+\begin{equation}
+\begin{split}
+d \rbr{ x, y } + d \rbr{ y, z } &= \sum_{ n = 1 }^{\infty} \frac{1}{2^n} \rbr{ \norm{ x - y }_{ L^{\infty} \sbr{ 0, n } } \wedge 1 + \norm{ y - z }_{ L^{\infty} \sbr{ 0, n } } \wedge 1 } \\
+&\ge \sum_{ n = 1 }^{\infty} \frac{1}{2^n} \rbr{ \norm{ x - z }_{ L^{\infty} \sbr{ 0, n } } \wedge 1 } = d \rbr{ x, z }.
+\end{split}
+\end{equation}
+
+The metric space is complete because Cauchy sequence $x_k$ is also a Cauchy sequence in $ \norm{ x - y }_{ L^{\infty} \sbr{ 0, n } } $ for any $n$ since
+\begin{equation}
+d \rbr{ x, y } \ge \frac{1}{2^n} \rbr{ \norm{ x - y }_{ L^{\infty} \sbr{ 0, n } } \wedge 1 }.
+\end{equation}
+This means $x_k$ is uniformly convergent on $ \sbr{ 0, n } $ and therefore $ x_k \rightrightarrows x $ for some $x$ on $ \srbr{ 0, +\infty } $.
+We proceed to prove $ d \rbr{ x_k, x } \rightarrow 0 $. This is because for $ \epsilon > 0 $, we may chose sufficiently large $n$ such that
+\begin{equation}
+\frac{1}{2^n} < \epsilon.
+\end{equation}
+We may then find sufficiently large $K$ for all $ k > K $,
+\begin{equation}
+\norm{ x_k - x }_{ L^{\infty} \sbr{ 0, m } } < \epsilon
+\end{equation}
+for $ m = 1, 2, \cdots, n $. Hence, for $ k > K $,
+\begin{equation}
+d \rbr{ x_k, x } \le \sum_{ m = 1 }^n \frac{1}{2^m} \rbr{ \norm{ x_k - x }_{ L^{\infty} \sbr{ 0, m } } } + \sum_{ m = n + 1 }^{\infty} \frac{1}{2^m} < \sum_{ n = 1 }^m \frac{1}{2^n} \epsilon + \epsilon < 2 \epsilon.
+\end{equation}
+
+The metric space is separable because the set of polynomials of rational coefficients is dense. This is because for $x$ and $ \epsilon > 0 $, we can find $n$ such that
+\begin{equation}
+\frac{1}{2^n} < \epsilon.
+\end{equation}
+Applying Weierstrass Approximation Theorem, there exists a polynomial $p$ such that
+\begin{equation}
+\norm{ p - x }_{ L^{\infty} \sbr{ 0, n } } < \epsilon.
+\end{equation}
+We may further find a polynomial $q$ with rational coefficients such that
+\begin{equation}
+\norm{ q - p }_{ L^{\infty} \sbr{ 0, n } } < \epsilon
+\end{equation}
+and therefore for $ m = 1, 2, \cdots, n $
+\begin{equation}
+\norm{ q - x }_{ L^{\infty} \sbr{ 0, m } } < 2 \epsilon.
+\end{equation}
+This implies
+\begin{equation}
+d \rbr{ q, x } \le \sum_{ m = 1 }^n \frac{1}{2^m} \norm{ q - x }_{ L^{\infty} \sbr{ 0, m } } + \sum_{ m = n + 1 }^{\infty} \frac{1}{2^m} < \sum_{ m = 1 }^n \frac{1}{2^m} 2 \epsilon + \epsilon < 3 \epsilon.
+\end{equation}
+\hfill$\Box$
+
+\end{document}

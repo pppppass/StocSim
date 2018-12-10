@@ -1,0 +1,195 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[Symbolsmallscale]{upgreek}
+\usepackage{bm}
+\usepackage[paper, cgu]{pdef}
+
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 13)}
+\author{Zhihan Li, 1600010653}
+\date{December 9, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Proof.} We have
+\begin{equation}
+\begin{split}
+&\ptrel{=} \sum_j W_{t_{ j + 1 / 2 }} \rbr{ W_{t_{ j + 1 }} - W_{t_j} } \\
+&= W_{t_{ j + 1 / 2 }} \rbr{ W_{t_{ j + 1 / 2 }} - W_{t_j} } + W_{t_{ j + 1 / 2 }} \rbr{ W_{t_{ j + 1 }} - W_{t_{ j + 1 / 2 }} } \\
+&= \frac{1}{2} \sum_j \rbr{ \rbr{ W_{t_{ j + 1 }}^2 - W_{t_{ j + 1 / 2 }}^2 + W_{t_{ j + 1 / 2 }}^2 - W_{t_j}^2 } } \\
+&+ \frac{1}{2} \sum_j \rbr{ \rbr{ W_{t_{ j + 1 / 2 }}- W_{t_j} }^2 - \rbr{ W_{t_{ j + 1 }}- W_{t_{ j + 1 / 2 }} }^2 } \\
+&= \frac{1}{2} W_t^2 + R.
+\end{split}
+\end{equation}
+where
+\begin{equation}
+R = \frac{1}{2} \sum_j \rbr{ \rbr{ W_{t_{ j + 1 / 2 }}- W_{t_j} }^2 - \rbr{ W_{t_{ j + 1 }}- W_{t_{ j + 1 / 2 }} }^2 }\rightarrow 0
+\end{equation}
+in second order since $ \pbr{ W, W }_t = t $ implies
+\begin{equation}
+\sum_j \rbr{ W_{t_{ j + 1 / 2 }}- W_{t_j} }^2, \sum_j \rbr{ W_{t_{ j + 1 }}- W_{t_{ j + 1 / 2 }} }^2 \rightarrow \frac{t}{2}
+\end{equation}
+in second order. Again,
+\begin{equation}
+\sum_j W_{t_{ j + 1 }} \rbr{ W_{t_{ j + 1 }} - W_{t_j} } = \frac{1}{2} W_t^2 + \sum_j \rbr{ W_{t_{ j + 1 }} - W_{t_j} }^2 \rightarrow \frac{1}{2} W_t^2 + \frac{t}{2}
+\end{equation}
+in second order.
+\hfill$\Box$
+
+\textbf{Problem 2.} \textit{Proof.} (a). We have
+\begin{equation}
+\begin{split}
+\sum_{ n = 0 }^{\infty} \frac{u^n}{ n ! } h_n \rbr{x} &= \exp \rbr{ \frac{1}{2} x^2 } \sum_{ n = 0 }^{\infty} \frac{\rbr{-u}^n}{ n ! } \frac{\sd[n]}{ \sd x^n } \exp \rbr{ -\frac{1}{2} x^2 } \\
+&= \exp \rbr{ \frac{1}{2} x^2 } \exp \rbr{ -\frac{1}{2} \rbr{ x - u }^2 } \\
+&= \exp \rbr{ u x - \frac{1}{2} u^2 }
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+\sum_{ n = 0 }^{\infty} \frac{u^n}{ n ! } H_n \rbr{ x, a } &= \exp \rbr{\frac{x^2}{ 2 a }} \sum_{ n = 0 }^{\infty} \frac{\rbr{ -a u }^n}{ n ! } \frac{\sd[n]}{ \sd x^n } \exp \rbr{-\frac{x^2}{ 2 a }} \\
+&= \exp \rbr{\frac{x^2}{ 2 a }} \exp \rbr{-\frac{\rbr{ x - a u }^2}{ 2 a }} \\
+&= \exp \rbr{ u x - \frac{1}{2} a u^2 }.
+\end{split}
+\end{equation}
+
+(b). Since
+\begin{equation}
+\begin{split}
+&\ptrel{=} \sum_{ n = 0 }^{\infty} \frac{u^n}{ n ! } \rbr{ \frac{1}{2} \frac{\pd[n]}{ \pd x^2 } + \frac{\pd}{ \pd a } } H_n \rbr{ x, a } \\
+&= \rbr{ \frac{1}{2} \frac{\pd[n]}{ \pd x^2 } + \frac{\pd}{ \pd a } } \sum_{ n = 0 }^{\infty} \frac{u^n}{ n ! } H_n \rbr{ x, a } \\
+&= \rbr{ \frac{1}{2} \frac{\pd[n]}{ \pd x^2 } + \frac{\pd}{ \pd a } } \exp \rbr{ u x - \frac{1}{2} a u^2 } \\
+&= 0,
+\end{split}
+\end{equation}
+we deduce
+\begin{equation}
+\rbr{ \frac{1}{2} \frac{\pd[n]}{ \pd x^2 } + \frac{\pd}{ \pd a } } H_n \rbr{ x, a } = 0.
+\end{equation}
+Again from
+\begin{equation}
+\begin{split}
+&\ptrel{=} \sum_{ n = 0 }^{\infty} \frac{u^n}{ n ! } \frac{\pd}{ \pd x } H_n \rbr{ x, a } \\
+&= \frac{\pd}{ \pd x } \sum_{ n = 0 }^{\infty} \frac{u^n}{ n ! } H_n \rbr{ x, a } \\
+&= \frac{\pd}{ \pd x } \exp \rbr{ u x - \frac{1}{2} a u^2 } \\
+&= u \exp \rbr{ u x - \frac{1}{2} a u^2 } \\
+&= \sum_{ n = 1 }^{\infty} \frac{u^n}{ \rbr{ n - 1 } ! } H_{ n - 1 } \rbr{ x, a },
+\end{split}
+\end{equation}
+we know
+\begin{equation}
+\frac{\pd}{ \pd x } H_n \rbr{ x, a } = n H_{ n - 1 } \rbr{ x, a }.
+\end{equation}
+
+(c). It remains to prove
+\begin{equation}
+\rbr{ n + 1 } \int_0^t H_n \rbr{ W_t, t } \sd W_t = H_{ n + 1 } \rbr{ W_t, t }.
+\end{equation}
+This can be shown by
+\begin{equation}
+\begin{split}
+&\ptrel{=} \sd H_{ n + 1 } \rbr{ W_t, t } \\
+&= \frac{\pd}{ \pd x } H_{ n + 1 } \rbr{ W_t, t } \sd W_t + \frac{\pd}{ \pd a } H_{ n + 1 } \rbr{ W_t, t } \sd t + \frac{1}{2} \frac{\pd[2]}{ \pd x^2 } H_{ n + 1 } \rbr{ W_t, t } \rbr{ \sd W_t }^2 \\
+&= \frac{\pd}{ \pd x } H_{ n + 1 } \rbr{ W_t, t } \sd W_t + \rbr{ \frac{1}{2} \frac{\pd[2]}{ \pd x^2 } + \frac{\pd}{ \pd a } } H_{ n + 1 } \rbr{ W_t, t } \sd t \\
+&= \rbr{ n + 1 } H_{ n + 1 } \rbr{ W_t, t } \sd W_t.
+\end{split}
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 3.} \textit{Answer.} (a). We deduce
+\begin{equation}
+\sd \rbr{ 1 + t } X_t = \sd W_t.
+\end{equation}
+Since $ X_0 = 0 $,
+\begin{equation}
+X_t = \frac{1}{ 1 + t } W_t.
+\end{equation}
+Hence, $X_t$ is a Gaussian process with zero expectation and
+\begin{equation}
+\ope X_s X_t = \frac{1}{ \rbr{ 1 + s } \rbr{ 1 + t } } s \wedge t.
+\end{equation}
+
+(b). We have
+\begin{equation}
+\sd \se^t X_t = \sd W_t
+\end{equation}
+and therefore
+\begin{equation}
+X_t = \se^{-t} \rbr{ W_t + X_0 }.
+\end{equation}
+If $X_0$ is deterministic, here $X_t$ is again a Gaussian process with
+\begin{equation}
+\ope X_t = \se^{-t} X_0
+\end{equation}
+and
+\begin{equation}
+\ope \rbr{ X_s - \se^{-s} X_0 } \rbr{ X_t - \se^{-t} X_0 } = \se^{ -s - t } s \wedge t.
+\end{equation}
+
+\textbf{Problem 4.} \textit{Answer.} For the stationary distribution, $\bm{X}_t$ are of identical distribution and therefore
+\begin{equation}
+\ope \mathbf{F} \rbr{\bm{X}_t}
+\end{equation}
+is a constant for any function $\mathbf{F}$. As a result, we have
+\begin{equation}
+0 = \sd \ope \bm{X}_t = \ope \sd \bm{X}_t = \mathbf{A} \rbr{ \ope \bm{X}_t } \sd t + \upsigma \ope \sd \bm{W}_t = \mathbf{A} \rbr{ \ope \bm{X}_t } \sd t.
+\end{equation}
+This means
+\begin{equation}
+\mathbf{A} \rbr{ \ope \bm{X}_t } = 0.
+\end{equation}
+Again we have
+\begin{equation}
+\begin{split}
+0 &= \sd \ope \bm{X}_t \bm{X}_t^{\text{T}} = \ope \sd \rbr{ \bm{X}_t \bm{X}_t^{\text{T}} } \\
+    &= \ope \rbr{ \sd \bm{X}_t } \bm{X}_t^{\text{T}} + \ope \bm{X}_t \ope \rbr{ \sd \bm{X}_t^{\text{T}} } + \ope \rbr{ \sd \bm{X}_t } \rbr{ \sd \bm{X}_t^{\text{T}} } \\
+&= \mathbf{A} \rbr{ \ope \bm{X}_t \bm{X}_t^{\text{T}} } \sd t + \rbr{ \ope \bm{X}_t \bm{X}_t^{\text{T}} } \sd t \mathbf{A}^{\text{T}} + \upsigma \upsigma^{\text{T}} \sd t,
+\end{split}
+\end{equation}
+where the last equality follows from
+\begin{equation}
+\ope \rbr{ \sd \bm{W}_t } \bm{X}_t = 0
+\end{equation}
+(which comes from the definition of It\^o integral) and
+\begin{equation}
+\rbr{ \mathbf{A} \bm{X}_t \sd t + \upsigma \sd \bm{W}_t } \rbr{ \bm{X}_t^{\text{T}} \mathbf{A}^{\text{T}} \sd t + \sd \bm{W}_t^{\text{T}} \upsigma^{\text{T}} } = \upsigma \sd \bm{W}_t \sd \bm{W}_t^{\text{T}} \upsigma^{\text{T}} = \upsigma \upsigma^{\text{T}} \sd t.
+\end{equation}
+This implies
+\begin{equation}
+\mathbf{A} \rbr{ \ope \bm{X}_t \bm{X}_t^{\text{T}} } + \rbr{ \ope \bm{X}_t \bm{X}_t^{\text{T}} } \mathbf{A}^{\text{T}} + \upsigma \upsigma^{\text{T}} = 0.
+\end{equation}
+
+\textbf{Problem 5.} \textit{Proof.} Assume
+\begin{equation}
+\sd X_t = \alpha \rbr{ X_t, t } \sd t + \beta \rbr{ X_T, t } \sd W_t.
+\end{equation}
+We have
+\begin{equation}
+X_{t_{ j + 1 }} = X_{t_j} + \alpha \rbr{ X_{t_j}, t_j } \Delta t_j + \beta \rbr{ X_{t_j}, t_j } \Delta W_{t_j} + \text{h.o.t.}
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+&\ptrel{=} \sum_j \sigma \rbr{ X_{t_{ j + 1 }}, t_{ j + 1 } } \Delta W_{t_{j}} \\
+&= \sum_j \rbr{ \sigma \rbr{ X_{t_j}, t_j } \Delta W_{t_j} + \rbr{ \beta \sigma_t } \sigma \rbr{ X_{t_j}, t_j } \Delta t_j \Delta W_{t_j} } \\
+&+ \sum_j \rbr{ \rbr{ \alpha \sigma_x } \rbr{ X_{t_j}, t_j } \Delta t_j \Delta W_{t_j} + \rbr{ \beta \sigma_x } \rbr{ X_{t_j}, t_j } \Delta W_{t_j}^2 } \\
+&+ \text{h.o.t.} \\
+&\rightarrow \int_0^t \sigma \rbr{ X_t, t } \sd W_t + \int_0^t \rbr{ \beta \sigma_x } \rbr{ X_t, t } \sd t.
+\end{split}
+\end{equation}
+As a result, we obtain
+\begin{gather}
+\alpha = b + \sigma_x \beta, \\
+\beta = \sigma.
+\end{gather}
+This means
+\begin{equation}
+\sd X_t = \rbr{ b + \sigma \sigma_x } \rbr{ X_t, t } \sd t + \sigma_x \rbr{ X_t, t } \sd W_t.
+\end{equation}
+
+\end{document}

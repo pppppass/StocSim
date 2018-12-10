@@ -1,0 +1,49 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Lecture 10)}
+\author{Zhihan Li, 1600010653}
+\date{November 28, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Proof.} We have
+\begin{equation}
+W \rbr{ x, t } = \frac{1}{\sqrt{ 4 \spi D t }} \exp \rbr{-\frac{ x^2 }{ 4 D t }}.
+\end{equation}
+Since
+\begin{equation}
+\int_{-\infty}^{\infty} W \rbr{ x, t } \sd x \equiv 1,
+\end{equation}
+we have $ W \rbr{ \cdot, 0 } = \delta $. This is the initial condition. The partial differential equation itself can be verified by
+\begin{equation}
+\frac{ \pd W }{ \pd t } \rbr{ x, t } = \rbr{ -\frac{1}{ 2 t } + \frac{x^2}{ 4 D t^2 } } W \rbr{ x, t } = D \frac{ \pd[2] W }{ \pd t^2 } \rbr{ x, t }.
+\end{equation}
+\hfill$\Box$
+
+\textbf{Problem 2.} \textit{Proof.} Denote the distribution with reflecting barrier to be $W_{\text{r}}$ while $W$ is the distribution in Problem 1. According to arguments in the notes, we have
+\begin{equation}
+W_{\text{r}} \rbr{ x, t } = W \rbr{ x, t } + W \rbr{ 2 x_1 - x, t }.
+\end{equation}
+The partial differential equation is satisfied automatically according to superposition principle. The argument of initial condition is identical to Problem 1. The boundary condition can be verified by noticing $W_{\text{r}}$ is even with respect to $x_1$ and it is smooth for any $ t > 0 $. When $ t = 0 $, $W_{\text{r}}$ vanished around $x_1$ in the distributional sense and therefore the Neumann boundary condition is still satisfied.
+\hfill$\Box$
+
+\textbf{Problem 3.} \textit{Proof.} Denote the distribution with absorbing barrier to be $W_{\text{a}}$. According to arguments in the notes, we have
+\begin{equation}
+W_{\text{a}} \rbr{ x, t } = W \rbr{ x, t } - W \rbr{ 2 x_1 - x, t }.
+\end{equation}
+The partial differential equation is satisfied automatically according to superposition principle. The argument of initial condition is identical to Problem 1. The boundary condition can be verified by noticing $W_{\text{a}}$ is odd with respect to $x_1$ and it is smooth for any $ t > 0 $. When $ t = 0 $, $W_{\text{s}}$ vanishes around $x_1$.
+\hfill$\Box$
+
+\textbf{Problem 4.} \textit{Answer.} We first verify by reflection principle that
+\begin{equation}
+P_{ 2 k, 2 k } = \frac{1}{2^{ 2 k }} \rbr{ \sum_{ j = 0 }^k \binom{ 2 n }{ j + k } - \sum_{ j = 1 }^k \binom{ 2 n }{ j - k } } = \frac{1}{2^{ 2 k }} \binom{ 2 k }{k} = u_{ 2 k } u_0
+\end{equation}
+for any $k$. We fix $ k = 0 $ first and then prove the equation of $ P_{ 2 k, 2 n } $ for any $n$ by induction. We then increase $k$ consecutively to prove the equation for any $n$. We perform nested induction since the equation $ P_{ 2 k, 2 n } $ relies on $ P_{ 2 \rbr{ k - r }, 2 \rbr{ n - r } } $ and $ P_{ 2 k, 2 \rbr{ n - r } } $ for $ 1 \le r \le k $.
+
+\end{document}
