@@ -7,7 +7,7 @@
 
 \DeclareMathOperator\ope{\mathrm{E}}
 
-\title{Answers to Exercises (Lecture 14)}
+\title{Answers to Exercises (Lecture 16)}
 \author{Zhihan Li, 1600010653}
 \date{December 26, 2018}
 
@@ -48,12 +48,12 @@ Z_2 = t W_n - Z_1.
 
 \textbf{Problem 2.} \textit{Proof.} We have
 \begin{equation}
-e_{ n + 1 } = e_n + \int_{t_n}^{t_{ n + 1 }} \rbr{ b \rbr{X_t} - b \rbr{X_n} } \sd s,
+e_{ n + 1 } = e_n + \int_{t_n}^{t_{ n + 1 }} \rbr{ b \rbr{X_t} - b \rbr{X_n} } \sd t,
 \end{equation}
 while leaving out high order terms we have (we assume $b''$ is bounded in order to safely ignore $ b'' \rbr{X_s} $ terms)
 \begin{equation}
 \begin{split}
-&\ptrel{=} \ope \rbr{ b \rbr{X_t} - b \rbr{X_{t_n}} }^2 \\
+&\ptrel{=} \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} b \rbr{X_t} - b \rbr{X_{t_n}} \sd t }^2 \\
 &\le C_1 \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \int_{t_n}^t \rbr{ \rbr{ b \rbr{X_s} b' \rbr{X_s} + \frac{1}{2} b'' \rbr{X_s} } \sd s + b' \rbr{X_s} \sd W_s } \sd t }^2 \\
 &\le C_2 \Delta t_n^4 + \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \int_{t_n}^t b' \rbr{X_s} \sd W_s \sd t }^2
 \end{split}
@@ -68,14 +68,13 @@ Since $b''$ is bounded, $b'$ is bounded (in an appropriate, finite region) and t
 \end{equation}
 This estimation shows
 \begin{equation}
-\ope \rbr{ b \rbr{X_t} - b \rbr{X_{t_n}} }^2 \le C_4 \rbr{ \Delta t_n }^3
+\ope \rbr{ \int_{t_n}^{t_{ n + 1 }} b \rbr{X_t} - b \rbr{X_{t_n}} \sd t }^2 \le C_4 \rbr{ \Delta t_n }^3
 \end{equation}
 and hence
 \begin{equation}
 \begin{split}
-\ope e_{ n + 1 }^2 &\le \rbr{ 1 + \Delta t_n } \ope e_n^2 + \rbr{ 1 + \frac{1}{ \Delta t_n } } \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \rbr{ b \rbr{X_t} - b \rbr{X_n} } \sd t }^2 \\
-&\le \rbr{ 1 + \Delta t_n L_1 } \ope e_n^2 + L_2^2 \rbr{ 1 + \Delta t_n } \int_{t_n}^{t_{ n + 1 }} \ope \rbr{ b \rbr{X_t} - b \rbr{X_n} }^2 \sd t \\
-&\le \rbr{ 1 + \Delta t_n L_1 } \ope e_n^2 + L_3^2 C_4 \rbr{ \Delta t_n }^4.
+\ope e_{ n + 1 }^2 &\le \rbr{ 1 + L_1 \Delta t_n } \ope e_n^2 + \rbr{ 1 + \frac{1}{ \Delta t_n } } \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \rbr{ b \rbr{X_t} - b \rbr{X_{t_n}} } \sd t }^2 \\
+&\le \rbr{ 1 + L_1 \Delta t_n } \ope e_n^2 + C_4 \rbr{ 1 + \Delta t_n } \rbr{ \Delta t_n }^2.
 \end{split}
 \end{equation}
 Applying Gronwall’s inequality yields
