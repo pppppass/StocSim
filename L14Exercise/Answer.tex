@@ -1,0 +1,61 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[Symbolsmallscale]{upgreek}
+\usepackage{bm}
+\usepackage[paper, cgu]{pdef}
+
+\title{Answers to Exercises (Lecture 14)}
+\author{Zhihan Li, 1600010653}
+\date{December 26, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Proof.} (2.11). The related dynamic is
+\begin{equation}
+\sd X^t_i = \rbr{ b_i + \frac{1}{2} \rbr{ \pdl{j} \sigma_{ i k } } \rbr{ \sigma_{ j k } } } \sd t + \sigma_{ i l } \sd W_l^t.
+\end{equation}
+Hence, the corresponding equation of density $p$ is
+\begin{equation}
+\begin{split}
+p_t &= -\pdl{i} \rbr{ b_i p + \frac{1}{2} \rbr{ \pdl{j} \sigma_{ i k } } \rbr{ \sigma_{ j k } p } } + \frac{1}{2} \pdl{ i j } \rbr{ \sigma_{ i k } \sigma_{ j k } p } \\
+&= -\pdl{i} \rbr{ b_i p } + \frac{1}{2} \pdl{i} \rbr{ \sigma_{ i k } \pdl{j} \rbr{ \sigma_{ j k } p } }
+\end{split}
+\end{equation}
+as desired.
+
+(2.12). The related dynamic is
+\begin{equation}
+\sd X^t_i = \rbr{ b_i + \rbr{ \pdl{j} \sigma_{ i k } } \rbr{ \sigma_{ j k } } } \sd t + \sigma_{ i l } \sd W_l^t.
+\end{equation}
+The corresponding equation of density $p$ is already
+\begin{equation}
+p_t = -\pdl{i} \rbr{ b_i p + \rbr{ \pdl{j} \sigma_{ i k } } \rbr{ \sigma_{ j k } p } } + \frac{1}{2} \pdl{ i j } \rbr{ \sigma_{ i k } \sigma_{ j k } p }
+\end{equation}
+as desired.
+\hfill$\Box$
+
+\textbf{Problem 2.} \textit{Answer.} We claim the invariant distribution is Gaussian first. This is because the equation
+\begin{equation}
+\mathbf{B} \nabla \cdot \rbr{ \bm{x} p } = \frac{1}{2} \upsigma \upsigma^{\text{T}} \Delta p
+\end{equation}
+is a elliptic equation and the solution is uniquely determined by $ p > 0 $, $ \int p = 1 $. One may directly verify the distribution given in Exercises of Lecture 14 satisfies this equation.
+
+Hence, the detailed balance condition is written as
+\begin{equation}
+\bm{j} = \mathbf{B} \bm{x} p - \frac{1}{2} \upsigma \upsigma^{\text{T}} \nabla p = 0
+\end{equation}
+and $ p \sim \mathcal{N} \rbr{ 0, \bm{\Sigma} } $ yields
+\begin{equation}
+\nabla p = \bm{\Sigma}^{-1} \bm{x} p.
+\end{equation}
+Combining these all, we reach
+\begin{equation}
+\mathbf{B} \bm{\Sigma} = \frac{1}{2} \upsigma \upsigma^{\text{T}}.
+\end{equation}
+\hfill$\Box$
+
+\end{document}

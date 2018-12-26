@@ -1,0 +1,120 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage{bm}
+\usepackage[paper, cgu]{pdef}
+
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 14)}
+\author{Zhihan Li, 1600010653}
+\date{December 26, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1.} \textit{Answer.} According to independence and stable increment, we may set $ t_n = 0 $ and $ t_{ n + 1 } = t $ and sample from
+\begin{gather}
+\Delta Z_1 = \int_0^t W_s \sd s,
+\Delta Z_2 = \int_0^t s \sd W_s
+\end{gather}
+and $ \Delta W_n = W_t $. We note that the joint distribution $ \rbr{ Z_1, Z_2, W_n } $ is a Gaussian distribution. Since
+\begin{equation}
+\ope \rbr{ \int_0^t W_s \sd s }^2 = \int_0^t \int_0^t s \wedge r \sd r \sd s = \frac{1}{3} t^3,
+\end{equation}
+and
+\begin{equation}
+\ope \rbr{ \int_0^t W_s \sd s } W_t d= \int_0^t s \sd s = \frac{1}{2} t^2,
+\end{equation}
+and
+\begin{equation}
+\ope W_t^2 = t,
+\end{equation}
+we may sample $ \rbr{ Z_1, W_n } $ from $ \mathcal{N} \rbr{ 0, \bm{\Sigma} } 
+$ where
+\begin{equation}
+\bm{\Sigma} = \msbr{ t^3 / 3 & t^2 / 2 \\ t^2 / 2 & t }.
+\end{equation}
+After that, $Z_2$ can be found by the relation
+\begin{equation}
+Z_1 + Z_2 = t W_t,
+\end{equation}
+or say
+\begin{equation}
+Z_2 = t W_n - Z_1.
+\end{equation}
+
+\textbf{Problem 2.} \textit{Proof.} We have
+\begin{equation}
+e_{ n + 1 } = e_n + \int_{t_n}^{t_{ n + 1 }} \rbr{ b \rbr{X_t} - b \rbr{X_n} } \sd s,
+\end{equation}
+while leaving out high order terms we have (we assume $b''$ is bounded in order to safely ignore $ b'' \rbr{X_s} $ terms)
+\begin{equation}
+\begin{split}
+&\ptrel{=} \ope \rbr{ b \rbr{X_t} - b \rbr{X_{t_n}} }^2 \\
+&\le C_1 \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \int_{t_n}^t \rbr{ \rbr{ b \rbr{X_s} b' \rbr{X_s} + \frac{1}{2} b'' \rbr{X_s} } \sd s + b' \rbr{X_s} \sd W_s } \sd t }^2 \\
+&\le C_2 \Delta t_n^4 + \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \int_{t_n}^t b' \rbr{X_s} \sd W_s \sd t }^2
+\end{split}
+\end{equation}
+Since $b''$ is bounded, $b'$ is bounded (in an appropriate, finite region) and therefore
+\begin{equation}
+\begin{split}
+&\ptrel{=} \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \int_{t_n}^t b' \rbr{X_s} \sd W_s \sd t }^2 \\
+&\le \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \rbr{ t_{ n + 1 } - s } b' \rbr{X_s} \sd W_s }^2 \\
+&\le M \int_{t_n}^{t_{ n + 1 }} \rbr{ t_{ n + 1 } - s }^2 \sd s = \frac{1}{3} M \rbr{ \Delta t_n }^3.
+\end{split}
+\end{equation}
+This estimation shows
+\begin{equation}
+\ope \rbr{ b \rbr{X_t} - b \rbr{X_{t_n}} }^2 \le C_4 \rbr{ \Delta t_n }^3
+\end{equation}
+and hence
+\begin{equation}
+\begin{split}
+\ope e_{ n + 1 }^2 &\le \rbr{ 1 + \Delta t_n } \ope e_n^2 + \rbr{ 1 + \frac{1}{ \Delta t_n } } \ope \rbr{ \int_{t_n}^{t_{ n + 1 }} \rbr{ b \rbr{X_t} - b \rbr{X_n} } \sd t }^2 \\
+&\le \rbr{ 1 + \Delta t_n L_1 } \ope e_n^2 + L_2^2 \rbr{ 1 + \Delta t_n } \int_{t_n}^{t_{ n + 1 }} \ope \rbr{ b \rbr{X_t} - b \rbr{X_n} }^2 \sd t \\
+&\le \rbr{ 1 + \Delta t_n L_1 } \ope e_n^2 + L_3^2 C_4 \rbr{ \Delta t_n }^4.
+\end{split}
+\end{equation}
+Applying Gronwall’s inequality yields
+\begin{equation}
+\ope e_n^2 \le C_5 \rbr{ \Delta t_n }^2,
+\end{equation}
+i.e. first order convergence.
+\hfill$\Box$
+
+\textbf{Problem 3.} \textit{Proof.} We have
+\begin{equation}
+\sd X_t^{ 2 r } \approx \rbr{ 2 r X_t^{ 2 r - 1 } b \rbr{X_t} + r \rbr{ 2 r - 1 } } \sd t + 2 r X_t^{ 2 r - 1 } b \rbr{X_t} \sd W_t
+\end{equation}
+and
+\begin{equation}
+\begin{split}
+\ope X_t^{ 2 r } &\le C_1 \int_0^t \rbr{ 2 r \ope \abs{X_t}^{ 2 r - 1 } b \rbr{X_t} + r \rbr{ 2 r - 1 } } \sd t \\
+&\le C_1 \int_0^t \rbr{ 2 r \ope \abs{X_t}^{ 2 r - 1 } + 2 r L \ope X_t^{ 2 r } + r \rbr{ 2 r - 1 } } \sd t \\
+&\le \int_0^t \rbr{ C_2 \ope X_t^{ 2 r } + C_3 } \sd t \\
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\ope X_t^{ 2 r } \le \frac{C_3}{C_2} \rbr{ \se^{ C_2 t } - 1 }.
+\end{equation}
+
+We have again
+\begin{equation}
+\begin{split}
+\ope X_{ n + 1 }^{ 2 r } &\le \ope X_n^{ 2 r } + 2 C_4 r \ope \abs{X_n}^{ 2 r - 1 } b \rbr{X_n} \Delta t_n \\
+&\le \rbr{ 1 + C_5 \Delta t_n } \ope X_n^{ 2 r } + C_6 \Delta t_n
+\end{split}
+\end{equation}
+and this leads to
+\begin{equation}
+\ope X_n^{ 2 r } \le \frac{C_6}{C_5} \rbr{ \se^{ C_6 T } - 1 }.
+\end{equation}
+
+Since $ \ope X_n^{ 2 r } \le C $, and $ \ope \rbr{ \overline{X}_t - X_n }^2 \le C_7 \Delta t $, we deduce $ \overline{X}_t^{ 2 r } \le C' $.
+\hfill$\Box$
+
+\end{document}
