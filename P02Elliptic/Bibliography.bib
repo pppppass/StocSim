@@ -1,0 +1,33 @@
+
+@article{higham_mean_2013,
+	title = {Mean Exit Times and the Multilevel Monte Carlo Method},
+	volume = {1},
+	url = {https://epubs.siam.org/doi/abs/10.1137/120883803},
+	doi = {10.1137/120883803},
+	abstract = {Numerical methods for stochastic differential equations are relatively inefficient when used to approximate mean exit times. In particular, although the basic Euler--Maruyama method has weak order equal to one for approximating the expected value of the solution, the order reduces to one half when it is used in a straightforward manner to approximate the mean value of a (stopped) exit time. Consequently, the widely used standard approach of combining an Euler--Maruyama discretization with a Monte Carlo simulation leads to a computationally expensive procedure. In this work, we show that the multilevel approach developed by Giles [Oper. Res., 56 (2008), pp. 607--617] can be adapted to the mean exit time context. In order to justify the algorithm, we analyze the strong error of the discretization method in terms of its ability to approximate the exit time. We then show that the resulting multilevel algorithm improves the expected computational complexity by an order of magnitude, in terms of the required accuracy. Numerical results are provided to illustrate the analysis.},
+	pages = {2--18},
+	number = {1},
+	journaltitle = {{SIAM}/{ASA} Journal on Uncertainty Quantification},
+	shortjournal = {{SIAM}/{ASA} J. Uncertainty Quantification},
+	author = {Higham, D. and Mao, X. and Roj, M. and Song, Q. and Yin, G.},
+	urldate = {2018-12-30},
+	date = {2013-01-01},
+	file = {Full Text PDF:/home/lzh/Zotero/storage/VSDC7R3W/Higham et al. - 2013 - Mean Exit Times and the Multilevel Monte Carlo Met.pdf:application/pdf}
+}
+
+@article{yan_parallel_2013,
+	title = {A Parallel Method for Solving Laplace Equations with Dirichlet Data Using Local Boundary Integral Equations and Random Walks},
+	volume = {35},
+	issn = {1064-8275},
+	url = {https://epubs.siam.org/doi/10.1137/120875004},
+	doi = {10.1137/120875004},
+	abstract = {In this paper, a hybrid approach for solving the Laplace equation in general three-dimensional (3-D) domains is presented. The approach is based on a local method for the Dirichlet-to-Neumann ({DtN}) mapping of a Laplace equation by combining a deterministic (local) boundary integral equation ({BIE}) method and the probabilistic Feynman--Kac formula for solutions of elliptic partial differential equations. This hybridization produces a parallel algorithm where the bulk of the computation has no need for data communication between processors. Given Dirichlet data of the solution on a domain boundary, a local {BIE} is established over the boundary of a local region formed by a hemisphere superimposed on the domain boundary. By using a homogeneous Dirichlet Green's function for the whole sphere, the resulting {BIE} involves only the Dirichlet data (the solution value) over the surface of the hemisphere, while over the patch of the domain boundary intersected by the hemisphere, both Dirichlet and Neumann data are used. Then, first, the solution value on the surface of the hemisphere is computed by the Feynman--Kac formula, which is implemented by a Monte Carlo walk-on-spheres algorithm. Second, a boundary collocation method is employed to solve the integral equation on the aforementioned local patch of the domain boundary to yield the required Neumann data there. As a result, a local method of finding the {DtN} mapping is obtained, which can be used to find all Neumann data on the whole domain boundary in a parallel manner. Finally, the potential solution in the whole space can be computed by an integral representation using both the Dirichlet and Neumann data over the domain boundary.},
+	pages = {B868--B889},
+	number = {4},
+	journaltitle = {{SIAM} Journal on Scientific Computing},
+	shortjournal = {{SIAM} J. Sci. Comput.},
+	author = {Yan, C. and Cai, W. and Zeng, X.},
+	urldate = {2018-12-30},
+	date = {2013-01-01},
+	file = {Full Text PDF:/home/lzh/Zotero/storage/5FJTQMYW/Yan et al. - 2013 - A Parallel Method for Solving Laplace Equations wi.pdf:application/pdf}
+}

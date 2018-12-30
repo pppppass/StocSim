@@ -3,6 +3,7 @@
 .ipynb_checkpoint/
 .*~/
 *.run
+build/
 
 # Generated files
 *.aux
@@ -16,7 +17,10 @@
 *.dir
 *.dat
 *.npy
+*.so
 
 # External files
 
 # Private files
+.vscode/
+setup.cfg

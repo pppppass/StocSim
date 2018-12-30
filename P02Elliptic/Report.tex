@@ -1,0 +1,618 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage{bm}
+\usepackage{siunitx}
+\usepackage[paper]{pdef}
+\usepackage[Symbolsmallscale]{upgreek}
+\usepackage{pgf}
+\usepackage{biblatex}
+
+\addbibresource{Bibliography.bib}
+
+\DeclareMathOperator\ope{\mathrm{E}}
+\DeclareMathOperator\opvar{\mathrm{Var}}
+
+\title{Report for Project 2: \\ Numerical SDE and the Exit Problem}
+\author{Zhihan Li, 1600010653}
+\date{December 30, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 7.} \textit{Answer.} We implement the basic Euler-Maruyama scheme together with the multi-level scheme to simulate the numerical SDE (stochastic differential equation), in order to find the value of a Poisson equation on a two-dimensional disk. The details are discussed in the following sections. The implementation uses Python for interface and C for solvers, together with OpenMP for parallel simulations and MKL for random number generation.
+
+\section{Problem setup}
+
+\subsection{SDE formulation}
+
+We consider to solve the partial differential equation of $u$
+\begin{equation} \label{Eq:PDE}
+\begin{cases}
+\rbr{ \bm{b} \cdot \nabla u + \Delta u / 2 } \rbr{ x, y } = f \rbr{ x, y }, & \rbr{ x, y } \in \mathbb{D}^2; \\
+u \rbr{ x, y } = u_0 \rbr{ x, y }, & \rbr{ x, y } \in \mathbb{S}^1.
+\end{cases}
+\end{equation}
+Here $\mathbb{D}^2$ stands for the two dimensional open unit disk, say $ \cbr{ \rbr{ x, y } : x^2 + y^2 < 1 } $ and $ \mathbb{S}^1 = \pd \mathbb{D}^2 $ is the one-dimensional unit circle.
+
+There are a handful of classical partial differential equation solvers applicable to this problem, including the finite difference method and finite element method. However, stochastic differential equations can also be applied according to the connection between SDEs and PDEs, which reveals a new pathway to numerical solvers.
+
+According to Dynkin's formula, which states if the dynamic
+\begin{equation}
+\sd \bm{X}_t = \bm{b} \rbr{\bm{X}_t} \sd t + \upsigma \sd \bm{W}_t
+\end{equation}
+has a stopping time $\tau$ with finite expectation, then we have for compactly supported $C^2$ functions $u$,
+\begin{equation}
+\ope_{\bm{x}} u \rbr{\bm{X}_{\tau}} = u \rbr{\bm{x}} + \ope_{\bm{x}} \int_0^{\tau} \mathcal{A} u \rbr{\bm{X}_t} \sd t,
+\end{equation}
+where
+\begin{equation}
+\mathcal{A} = \bm{b} \cdot \nabla + \frac{1}{2} \rbr{ \upsigma \upsigma^{\text{T}} } : \nabla^2
+\end{equation}
+is the infinitesimal generator. We implicitly assume $upsigma$ is non-singular here.
+
+By setting $\upsigma$ to the identity matrix, and $\tau$ to be the time $\bm{X}_t$ touches $\mathbb{S}^1$, or say formally
+\begin{equation}
+\tau = \inf \cbr{ t: \bm{X}_t \in \mathbb{S}^1 },
+\end{equation}
+we immediately obtain from appropriate smoothness assumption that $u$ defined as
+\begin{equation}
+u \rbr{\bm{x}} = \ope_{\bm{x}} u_0 \rbr{\bm{X}_{\tau}} - \ope_{\bm{x}} \int_0^{\tau} f \rbr{\bm{X}_t} \sd t
+\end{equation}
+solves the equation \eqref{Eq:PDE}.
+
+One additional proof should be made, that is, $ \ope_{\tau} < \infty $. By set $ h \rbr{\bm{x}} = -A \exp \rbr{ \lambda x_1 } $, we have
+\begin{equation}
+\mathcal{A} h \rbr{\bm{x}} = -\frac{1}{2} A \lambda^2 \exp \rbr{ \lambda x_1 } - A b_1 \rbr{\bm{x}} \lambda \exp \rbr{ \lambda x_1 }.
+\end{equation}
+Since $ \exp \rbr{ \lambda x_1 } $ and $b_1$ are both bounded in $\overline{\mathbb{D}^2}$, we can find sufficiently large $\lambda$ and an appropriate positive $A$ such that
+\begin{equation}
+\mathcal{A} h \rbr{\bm{x}} \le -1
+\end{equation}
+uniformly on $\overline{\mathbb{D}^2}$. As a result, for finite $T$, Dynkin's formula again gives
+\begin{equation}
+\ope_{\bm{x}} h \rbr{\bm{X}_{ \tau \wedge T }} = h \rbr{\bm{x}} + \ope_{\bm{x}} \int_0^{ \tau \wedge T } \mathcal{A} h \rbr{\bm{X}_t} \sd t \le h \rbr{\bm{x}} - \ope_{\bm{x}} \rbr{ \tau \wedge T }
+\end{equation}
+and
+\begin{equation}
+\ope_{\bm{x}} \rbr{ \tau \wedge T } \le h \rbr{\bm{x}} - \ope_{\bm{x}} h \rbr{\bm{X}_{ \tau \wedge T }} \le 2 A.
+\end{equation}
+By passing $ T \rightarrow +\infty $, monotone convergence yields
+\begin{equation}
+\ope_{\bm{x}} \tau \le 2 A
+\end{equation}
+and is therefore finite.
+
+\subsection{Model problems}
+
+According to previous arguments, if we want to solve the value of $u$ in \eqref{Eq:PDE} at a single point $ \bm{x} \in \mathbb{D}^2 $, what we need to do is to simulate
+\begin{equation} \label{Eq:SDE}
+\begin{cases}
+\sd \bm{X}_t = \bm{b} \sd t + \sd \bm{W}_t, \\
+\bm{X}_0 = \bm{x}
+\end{cases}
+\end{equation}
+and then calculate $ u \rbr{\bm{x}} $ by
+\begin{equation} \label{Eq:Dyn}
+u \rbr{\bm{x}} = \ope_{\bm{x}} u_0 \rbr{\bm{X}_{\tau}} - \ope_{\bm{x}} \int_0^{\tau} f \rbr{\bm{X}_t} \sd t.
+\end{equation}
+We denote
+\begin{equation}
+U = u_0 \rbr{\bm{X}_{\tau}} - \int_0^{\tau} f \rbr{\bm{X}_t} \sd t,
+\end{equation}
+which is a variable for each trajectory, and then we can estimate $ u \rbr{\bm{x}} $ as
+\begin{equation}
+u \rbr{\bm{x}} = \ope_{\bm{x}} U.
+\end{equation}
+
+Since there are two terms in the right hand side of \eqref{Eq:Dyn}, we devise two model problems emphasizing on each term to investigate the convergence of numerical algorithms.
+
+The first model equation consists of
+\begin{equation} \label{Eq:Prob1}
+\begin{cases}
+\bm{b} \rbr{ x, y } = \rbr{ x, y }, & \rbr{ x, y } \in \overline{\mathbb{D}^2} \\
+f \rbr{ x, y } = x^2 + y^2 + 1, & \rbr{ x, y } \in \overline{\mathbb{D}^2} \\
+u_0 \rbr{ x, y } = 1 / 2, & \rbr{ x, y } \in \mathbb{S}^1.
+\end{cases}
+\end{equation}
+The analytical solution is given by
+\begin{equation}
+u \rbr{ x, y } = \frac{1}{2} \rbr{ x^2 + y^2 }.
+\end{equation}
+In this model problem, the term
+\begin{equation}
+\ope_{\bm{x}} u_0 \rbr{\bm{X}_{\tau}} = \frac{1}{2}
+\end{equation}
+directly and the error stems from the term integrating $f$.
+
+Another model problem consists of
+\begin{equation} \label{Eq:Prob2}
+\begin{cases}
+b \rbr{ x, y } = \rbr{ x - 1, -\rbr{ y + 1 } }, & \rbr{ x, y } \in \overline{\mathbb{D}^2} \\
+f \rbr{ x, y } = 0, & \rbr{ x, y } \in \overline{\mathbb{D}^2} \\
+u_0 \rbr{ x, y } = x y + x - y, & \rbr{ x, y } \in \mathbb{S}^1.
+\end{cases}
+\end{equation}
+The analytical solution is given by
+\begin{equation}
+u \rbr{ x, y } = x y + x - y.
+\end{equation}
+In this model problem, the second term vanish, and the error comes from
+\begin{equation}
+\ope_{\bm{x}} u_0 \rbr{\bm{X}_{\tau}}.
+\end{equation}
+
+The heat map of the solutions of these two model problems are given in Figure \ref{Fig:Heat1} and \ref{Fig:Heat2}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure18.pgf}
+\caption{Heat map of solution towards first model problem \eqref{Eq:Prob1}}
+\label{Fig:Heat1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure19.pgf}
+\caption{Heat map of solution towards second model problem \eqref{Eq:Prob2}}
+\label{Fig:Heat2}
+\end{figure}
+
+\section{Euler--Maruyama scheme}
+
+\subsection{Statement of the scheme}
+
+We first adopt the well-known Euler--Maruyama scheme to solve this problem, or say the SDE \eqref{Eq:SDE}. The solution is first initialized as
+\begin{equation}
+\bm{X}^0 = 0,
+\end{equation}
+and then the forward iteration is conducted as (we use standard numerical PDE notations $^m$ here, which represents the numerical solution at the $m$-th time step)
+\begin{equation} \label{Eq:EM}
+\bm{X}^{ m + 1 } = \bm{X}^m + h \bm{b} \rbr{\bm{X}^m} + \Delta \bm{W}^m,
+\end{equation}
+where $ \Delta \bm{W}^m $ are directly sampled from $ \mathcal{N} \rbr{ 0, h \bm{I} } $.
+
+After simulated the dynamics, we then consider the two terms in the right hand side of \eqref{Eq:Dyn}, or say $U$. The main difficulty is to find an appropriate numerical discretization of the stopping time $\tau$: what we get is approximation of points $\bm{X}^m$ on the whole trajectory, but the trajectory between points completely remain unknown. Moreover, the intermediate trajectory cannot be found by numerical interpolations: the Brownian motion gets involved. As a result, we can only endure such bad approximation of $\tau$. Eventually we adopt a na\"ive strategy as
+\begin{equation}
+m_{\nu} = \min \cbr{ m: \bm{X}^m \notin \mathbb{D}^2 },
+\end{equation}
+and we denote the approximation of $\tau$ to be
+\begin{equation}
+\nu = m_{\nu} h.
+\end{equation}
+Here we use $ \bm{X}^m \notin \mathbb{D}^2 $ instead of $ \bm{X}^m \in \mathbb{S}^2 $ because the latter one has null Lebesgue measure actually, and we must take expand it into a filled region to make conditionals.
+
+We then proceed to find the discretization of two terms in $U$. The second term is pretty much easy, since it suffices to apply an appropriate numerical quadrature. We discretize this term along a trajectory $\bm{X}^m$ by composite trapezoid formula
+\begin{equation} \label{Eq:Trap}
+\int_0^{\tau} f \rbr{\bm{X}_t} \sd t \approx \frac{h}{2} \sum_{ m = 0 }^{ m_{\nu} - 1 } \rbr{ f \rbr{\bm{X}^m} + f \rbr{\bm{X}^{ m + 1 }} }
+\end{equation}
+since Euler--Maruyama scheme can achieve \emph{at most} first order convergence. (Although we need to point out the non-smoothness of $ f \rbr{\bm{X}_t} $ makes the convergence order invalid actually). We choose $ m_{\nu} - 1 $ here, and we expect mean of the numerical simulations are slightly smaller than the original value if $ f \ge 0 $. To be exact, this terms makes the estimated value of $ u \rbr{\bm{x}} $ smaller if $ f \ge 0 $ or vice versa. In short, we \emph{ignore part of the integral}. The first term is more tricky because we must determine a approximation of $\bm{X}_{\nu}$. The final approximation $\tilde{\bm{X}}^{m_{\nu}}$ is chosen to be the intersection between the line segment $ \bm{X}^{ m_{\nu} - 1 } \bm{X}^{m_{\nu}} $ and the circle $\mathbb{S}^1$.
+
+\subsection{Convergence order}
+
+It is well known the Euler--Maruyama scheme \eqref{Eq:EM} have first order weak convergence and half order strong convergence. Actually, since the noise term in \eqref{Eq:EM} is isotropic and homogeneous, order the strong convergence is one, as pointed out in previous assignments. However, problem lies in the convergence of exit time: it does not falls in to the domain of strong convergence and weak convergence. It has been proved \parencite{higham_mean_2013} that only half order weak convergence can be guaranteed for the exit time, as
+\begin{equation}
+\ope \nu - \ope \tau = O \rbr{\sqrt{h}}.
+\end{equation}
+Strong convergence can also be established, but with order half in $L^1$ sense,
+\begin{equation}
+\ope \abs{ \nu - \tau } = O \rbr{\sqrt{ h \log h^{-1} }}.
+\end{equation}
+As a result, we can only expect half order convergence from the numerical result. The weak convergence of approximation of
+\begin{equation}
+\int_0^{\tau} f \rbr{\bm{X}_t} \sd t
+\end{equation}
+should be $ O \rbr{\sqrt{h}} $ since the error in $\tau$ is half order and the error in $ f \rbr{\bm{X}_t} $ is actually first order. The error of
+\begin{equation}
+\ope_{\bm{x}} u_0 \rbr{\bm{X}_{\tau}}
+\end{equation}
+is more difficult to estimate because we use some kind of interpolation to find $\tilde{\bm{X}}^{m_{\nu}}$. We suppose it should be of half order, and observe the numerical results for final determination.
+
+\section{Multi-level scheme}
+
+\subsection{Derivation of the scheme}
+
+As pointed out by \parencite{higham_mean_2013}, multi-level scheme can also be applied to solve the problem, since half order convergence is never satisfactory: the Monte Carlo error is also half order, so if we want to get $ O \rbr{\epsilon} $ error, we need to endure some computation of $ O \rbr{\epsilon^{-4}} $. As a result, we first set different $h$s by $ h_0, h_1, \cdots, h_L $, with $ h_{ i + 1 } = h_i / K $. Denote the estimation of $\tau$ at each level to be $\nu_i$. According to \parencite{higham_mean_2013}, we have
+\begin{equation} \label{Eq:Level}
+\opvar \rbr{ \nu_i - \nu_{ i - 1 } } = O \rbr{\sqrt{ h_i \log h_i^{-1} }}.
+\end{equation}
+Note that here $\nu_i$ and $ \nu_{ i - 1 } $ are defined on the same trajectory. During implementation, we should compute the increment of noise in the $ i - 1 $-th level by samples from the $i$-th sample as
+\begin{equation}
+\Delta W^{m}_{ i - 1 } = \sum_{ j = 0 }^{ K - 1 } \Delta W^{ m K + j }_i.
+\end{equation}
+If we denote the approximation of
+\begin{equation}
+U = u_0 \rbr{\bm{X}_{\tau}} - \int_0^{\tau} f \rbr{\bm{X}_t} \sd t
+\end{equation}
+at $i$-th level as
+\begin{equation}
+V_i = u_0 \rbr{\tilde{\bm{X}}^{m_{ \nu_i, i }}} + \frac{h_i}{2} \sum_{ m = 0 }^{ m_{ \nu_i, i } - 1 } \rbr{ f \rbr{\bm{X}_i^{m}} + f \rbr{\bm{X}_i^{ m + 1 }}},
+\end{equation}
+according to previous arguments, we also suppose in analog of \eqref{Eq:Level} that
+\begin{equation} \label{Eq:Asy}
+\opvar \rbr{ V_i - V_{ i - 1 } } = O \rbr{\sqrt{ h_i \log h_i^{-1} }}.
+\end{equation}
+We take $ A_0, A_1, \cdots, A_L $ samples to estimate $ V_0, V_1 - V_0, \cdots, V_L - V_{ L - 1 } $. As a result, the computational cost is approximately
+\begin{equation} \label{Eq:Cost}
+\sum_{ i = 0 }^L \rbr{ A_i \frac{C_1}{h_i} } = C_1 \sum_{ i = 0 }^L \frac{A_i}{h_i}.
+\end{equation}
+And the variance is (since $ \opvar V_0 $ should converges to a constant)
+\begin{equation} \label{Eq:Var}
+\frac{C_2}{A_0} + \sum_{ i = 1 }^L \frac{ C_3 \sqrt{ h_i \log h_i^{-1} } }{A_i}
+\end{equation}
+if we conduct independent sampling at each level. If we want to minimize \eqref{Eq:Var} with \eqref{Eq:Cost} constrained, H\"older inequality yields the optimal choice of parameters
+\begin{gather} \label{Eq:Strat}
+A_0 = C \sqrt{\frac{ C_2 h_0 }{C_1}}, \\
+A_i = C \sqrt{\frac{ C_3 \sqrt{h_i}^3 \sqrt{ \log h_i^{-1} } }{C_1}}.
+\end{gather}
+
+\section{Numerical result}
+
+\subsection{Euler--Maruyama scheme}
+
+We first investigate the convergence of Euler--Maruyama scheme. We denote $ h = 1 / N $ in correspondence to numerical ODE notations. We conduct $M$ times of simulations and get $ U_1, U_2, \cdots, U_M $. We can utilize statistics to calculate the estimation of $ u \rbr{\bm{x}} $. To be precise we calculate
+\begin{equation}
+\hat{u} \rbr{\bm{x}} = \frac{1}{M} \sum_{ i = 1 }^M U_i
+\end{equation}
+and
+\begin{equation}
+\mu = \hat{u} \rbr{\bm{x}} - u \rbr{\bm{x}}
+\end{equation}
+for the error. We also calculate the standard deviation of $U$, if we divide which by $\sqrt{M}$ we will get an estimation of the standard deviation of $ \hat{u} \rbr{\bm{x}} $. In practice we calculate
+\begin{equation}
+\sigma = \sqrt{\frac{1}{M^2} \sum_{ i = 1 }^M \rbr{ U_i - \mu }^2 }.
+\end{equation}
+We ignore the minus one in $ M - 1 $ since $M$ is rather large in our experiment. Hence, the bias term in the error can be represents as $\mu$ if $\sigma$ is sufficiently small, and the variance can be reflected by $\sigma$.
+
+We first test the solvers on the first model problem. Figures are shown in Figure \ref{Fig:EM11}, \ref{Fig:EM12} and \ref{Fig:EM13}. The $\bm{x}$ are valued $ \rbr{ 0.0, 0.0 } $, $ \rbr{ 0.5, 0.0 } $ and $ \rbr{ 0.5, 0.5 } $ respectively.
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure01.pgf}
+\caption{Bias and variance curve for the first model problem at $ \rbr{ 0.0, 0.0 } $}
+\label{Fig:EM11}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure02.pgf}
+\caption{Bias and variance curve for the first model problem at $ \rbr{ 0.5, 0.0 } $}
+\label{Fig:EM12}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure03.pgf}
+\caption{Bias and variance curve for the first model problem at $ \rbr{ 0.5, 0.5 } $}
+\label{Fig:EM13}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+Part of the quantitative results are summarized in Table \ref{Tbl:EM11}, \ref{Tbl:EM12} and \ref{Tbl:EM13} with $ M = 8 N $.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$N$ & $M$ & Error $\mu$ & Standard deviation $\sigma$ & Time (\Si{s}) \\
+\hline
+\input{Table1.tbl}
+\end{tabular}
+\caption{Numerical results for the first model problem at $ \rbr{ 0.0, 0.0 } $}
+\label{Tbl:EM11}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$N$ & $M$ & Error $\mu$ & Standard deviation $\sigma$ & Time (\Si{s}) \\
+\hline
+\input{Table2.tbl}
+\end{tabular}
+\caption{Numerical results for the first model problem at $ \rbr{ 0.5, 0.0 } $}
+\label{Tbl:EM12}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$N$ & $M$ & Error $\mu$ & Standard deviation $\sigma$ & Time (\Si{s}) \\
+\hline
+\input{Table3.tbl}
+\end{tabular}
+\caption{Numerical results for the first model problem at $ \rbr{ 0.5, 0.5 } $}
+\label{Tbl:EM13}
+\end{table}
+
+Again we note that the solid lines, $\mu$ stands for the bias term and the dashed lines, $\sigma$ stands for the variance of the estimation $ \hat{u} \rbr{\bm{x}} $. From these figures, the error caused by variance, say $\sigma$ is indeed half order convergence. We proceed to look at the bias term. The data point make sense only if the solid line is located over the dashed line, since there are always fluctuation of strength $\sigma$, and this may hide the real values of bias if $\sigma$ is not small enough. However, it can be seen from the figures that $ M = 8 N $ suffices to constrain $ \abs{\mu} > 3 \sigma $ approximately and in this case $\mu$ reflects the bias. We can easily find the bias is also of half order convergence. So our conclusion is \emph{the Euler--Maruyama scheme has \emph{half} order behavior on this problem.}
+
+One need to notice that $\mu$ are always negative in the tables. According to the special structure of the problem, say $ f \ge 0 $. Because we does not count the segment $ \bm{X}^{m_{\nu}} \bm{X}^{ m_{\nu} + 1 } $ in the quadrature \ref{Eq:Trap}, we expect $\mu$ to be positive but in fact $\mu$ is negative. This means there approximation is itself bad, and if we count the segment larger error will occurs.
+
+Some analysis can be done as follows. There are mainly two types of errors:
+\begin{partlist}
+\item The continuous trajectory $\bm{X}_t$ reaches the boundary before the approximated stopping time $ \nu = h \tau_{\nu} $ of the numerical, discrete trajectory $\bm{X}^m$, or say $ \tau < \nu $;
+\item After, or $ \tau > \nu $.
+\end{partlist}
+Since $\mu$ is negative, we deduce that the first case must have happened for a great number of times. This can be understood intuitively since it is well possible that $ \bm{X}^m, \bm{X}^{ m + 1 } \in \mathbb{D}^2 $ but the trajectory (which is a bridge now) between $ h m $ and $ h \rbr{ h m + 1 } $ already touches the boundary. However, this needs careful treatment beyond our capability.
+
+We also plot figures of the running time in Figure \ref{Fig:EMTime11}, \ref{Fig:EMTime12} and \ref{Fig:EMTime13} for further comparison.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure07.pgf}
+\caption{Running time for the first model problem at $ \rbr{ 0.0, 0.0 } $}
+\label{Fig:EMTime11}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure08.pgf}
+\caption{Running time for the first model problem at $ \rbr{ 0.5, 0.0 } $}
+\label{Fig:EMTime12}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure09.pgf}
+\caption{Running time for the first model problem at $ \rbr{ 0.5, 0.5 } $}
+\label{Fig:EMTime13}
+\end{figure}
+
+Generally speaking the running time has a quadratic with respect to $N$ along a fixed ``refinement path'' $ M = \cdot N $. One may observe the time will be smaller if the starting point $\bm{x}$ is located closer to the boundary. More carefully investigation reveals that $\sigma$ is smaller. This follows the intuition since $\bm{X}$ touches the boundary more easily.
+
+We then proceed to consider the second problem. The settings are almost identical to the first problem. The $\bm{x}$ are valued $ \rbr{ 0.5, 0.0 } $, $ \rbr{ 0.0, 0.5 } $ and $ \rbr{ 0.5, 0.5 } $ respectively. The figures are Figure \ref{Fig:EM21}, \ref{Fig:EM22} and \ref{Fig:EM23}.
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure04.pgf}
+\caption{Bias and variance curve for the second model problem at $ \rbr{ 0.5, 0.0 } $}
+\label{Fig:EM21}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure05.pgf}
+\caption{Bias and variance curve for the second model problem at $ \rbr{ 0.5, 0.0 } $}
+\label{Fig:EM22}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure06.pgf}
+\caption{Bias and variance curve for the second model problem at $ \rbr{ 0.5, 0.5 } $}
+\label{Fig:EM23}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+The quantitative results are summarized in Table \ref{Tbl:EM21}, \ref{Tbl:EM22} and \ref{Tbl:EM23} with $ M = 512 N $.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$N$ & $M$ & Error $\mu$ & Standard deviation $\sigma$ \\
+\hline
+\input{Table4.tbl}
+\end{tabular}
+\caption{Numerical results for the second model problem at $ \rbr{ 0.5, 0.0 } $}
+\label{Tbl:EM21}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$N$ & $M$ & Error $\mu$ & Standard deviation $\sigma$ \\
+\hline
+\input{Table5.tbl}
+\end{tabular}
+\caption{Numerical results for the second model problem at $ \rbr{ 0.0, 0.5 } $}
+\label{Tbl:EM22}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$N$ & $M$ & Error $\mu$ & Standard deviation $\sigma$ \\
+\hline
+\input{Table6.tbl}
+\end{tabular}
+\caption{Numerical results for the second model problem at $ \rbr{ 0.5, 0.5 } $}
+\label{Tbl:EM23}
+\end{table}
+
+The figures also shows the half order convergence in bias with respect to $N$.
+
+There are two distinction between these two problems. The first is the constant $C$ for the ``refinement path'' $ M = C N $ to keep $ \abs{\mu} > 3 \sigma $. For the first problem $ C = 8 $ suffices but for the second problem $ C = 512 $ roughly suffices. The is because the error in the first problem stems from the term
+\begin{equation}
+\int_0^{\tau} f \rbr{\bm{X}_t} \sd t \approx \frac{h}{2} \sum_{ m = 0 }^{ m_{\nu} - 1 } \rbr{ f \rbr{\bm{X}^{m}} + f \rbr{\bm{X}^{ m + 1 }}}.
+\end{equation}
+The error in $\tau$ and $\nu$ immediately affects the integral interval and hence the error is roughly $\norm{f}_{\infty}$ multiplicative of $ \abs{ \nu - \tau } $. For second problem, the error all comes from
+\begin{equation}
+u_0 \rbr{\bm{X}_{\tau}} \approx u_0 \rbr{\tilde{\bm{X}}^{m_{\nu}}},
+\end{equation}
+and hence only error between distribution of the final exit point $\tilde{\bm{X}}^{m_{\nu}}$ and $\bm{X}_{\tau}$ gets involved. If the function $u_0$ on $\mathbb{S}^1$ is smooth enough, the error is a small multiplicative of $ \abs{ \nu - \tau } $. Another distinction is that the error $\mu$ for the first problem has signs varying, and this is related to the points. This verifies our argument for the first model problem (since the sign can vary for other problems).
+
+\subsection{Multi-level Monte Carlo}
+
+We need to first verify our ansatz of $ \opvar \rbr{ V_i - V_{ i - 1 } } $ in \eqref{Eq:Asy} numerically to achieve a effective sampling strategy. We plot the estimated variance of $V_h$ and $ V_h - V_{ 2 h } $. (This is exactly the variance without square roots. $V_h$ denotes the value of $V$ estimated using step size $h$, with $ N = 1 / h $.)  The figures are given in Figure \ref{Fig:VAll} and \ref{Fig:VDiff}. Here $M$ are all set to be 65536. We perform calculation on the first model problem.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure21.pgf}
+\caption{Variance of $V_h$ with respect to $N$}
+\label{Fig:VAll}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure20.pgf}
+\caption{Variance of $ V_h - V_{ 2 h } $ with respect to $N$}
+\label{Fig:VDiff}
+\end{figure}
+
+With $N$ grows, we can see approximately $ \opvar V_h $ hangs and converge to a fixed value, while $ \opvar \rbr{ V_h - V_{ 2 h } } $ has approximately half order convergence. This verifies our assumption \eqref{Eq:Asy}.
+
+Another value to be determined is the ratio between $C_1$, $C_2$ and $C_3$ in our strategy \eqref{Eq:Strat}. We first note that $C_1$ does not matter the ratios and therefore we fix $ C_1 = 1 $. Since
+\begin{gather}
+\opvar V_i \approx C_2, \\
+\opvar \rbr{ V_i - V_{ i - 1 } } \approx  C_3 \sqrt{ h_i \log h^{-1} },
+\end{gather}
+we read from the figures that $C_2$ and $C_3$ are approximately has the same order. We again assume them to be 1 and drop them. Hence, if we set $ A_0 = M $, then we have
+\begin{gather}
+C = \frac{M}{\sqrt{h_0}}, \\
+A_i = C \sqrt[4]{h_i}^3 \sqrt[4]{ \log h_i^{-1} }.
+\end{gather}
+
+We first implement a multi-level Monte Carlo method based on Euler--Maruyama scheme with $ L = 3 $ and $ K = 4 $. We only test the first model problem and figures about $\mu$ and $\sigma$ are given in Figure \ref{Fig:ML11}, \ref{Fig:ML12} and \ref{Fig:ML13}.
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure10.pgf}
+\caption{Bias and variance curve for the first model problem using Multi-Level at $ \rbr{ 0.0, 0.0 } $}
+\label{Fig:ML11}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure12.pgf}
+\caption{Bias and variance curve for the first model problem using Multi-Level at $ \rbr{ 0.5, 0.0 } $}
+\label{Fig:ML12}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure14.pgf}
+\caption{Bias and variance curve for the first model problem using Multi-Level at $ \rbr{ 0.5, 0.5 } $}
+\label{Fig:ML13}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation $\sigma$.
+}
+\end{figure}
+
+From this figures, we deduce that the bias is still of half order convergence, but the absolute value of errors are much more smaller than the original Euler--Maruyama method. One significant phenomenon is that the constant $C$ for the ``refinement path'' $ M = C N $ such that $ \abs{\mu} > 3 \sigma $ is much more bigger, and this means the absolute value of real bias are much smaller.
+
+We also plot figures of the running time in Figure \ref{Fig:LMTime11}, \ref{Fig:LMTime12} and \ref{Fig:LMTime13}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure11.pgf}
+\caption{Running time for the first model problem using multi-level at $ \rbr{ 0.0, 0.0 } $}
+\label{Fig:LMTime11}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure13.pgf}
+\caption{Running time for the first model problem using multi-level at $ \rbr{ 0.5, 0.0 } $}
+\label{Fig:LMTime12}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure15.pgf}
+\caption{Running time for the first model problem at $ \rbr{ 0.5, 0.5 } $}
+\label{Fig:LMTime13}
+\end{figure}
+
+Compared with the previous figures, we can see that the running time has again quadratic growth as the vanilla Euler--Maruyama scheme, and more importantly the absolute number of that is also close. For example, using $ M = 8 N $, the error may hit $10^{-3}$ using the original scheme at $ N = 10^5 $, but the multi-level version can achieve it at $ N = 3 \times 10^3 $ with $ M = 512 N $. The overall computational cost is about $10^3\Si{s}$ and $10^2\Si{s}$ and a huge margin is shown.
+
+We investigate the effect of number of levels $L$ finally. We keep $ M = 1048576 $ and vary $N$ and $L$ to plot $\abs{mu}$ and $\sigma$ in Figure \ref{Fig:Summ}.
+
+\begin{figure}[htbp]
+{
+\centering
+\input{Figure16.pgf}
+\caption{Error and standard deviation curve for different $L$}
+\label{Fig:Summ}
+}
+{
+\footnotesize Solid lines: error $\abs{\mu}$; dashed lines: standard deviation curve $\sigma$.
+}
+\end{figure}
+
+The running time of different $L$ are also plotted in Figure \ref{Fig:SummTime}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure17.pgf}
+\caption{Running time for different $L$}
+\label{Fig:SummTime}
+\end{figure}
+
+It can be seen these figures that bias $\mu$ goes down as $L$ increases, while the running time is a constant multiplicative of the vanilla Euler--Maruyama scheme. For example, if we take $ L = 0 $ and $ L = 7 $ for comparison, the running time difference between them are at most $7$ times of the vanilla scheme, but the bias is cut down by $10$ times approximately. This achieves much better results than decreasing $h$ for the vanilla scheme since we have already verified its half convergence.
+
+One should note that we fix $L$ by a constant and does not let $ L = \log N $. This is because there because computing a small number of samples will not lead to a huge decrease in error since there are also sample error, which is random at strength $\sigma$. We need to balance the bias and $\sigma$ instead of blindly decrease the bias for practical use. Another consideration is that for a small number of samples there are also time costs at cache (restart of computation), operation system (load of libraries) scripting (Python loops) and parallel barrier (OpenMP).
+
+We finally provide a theoretical computation to show the best convergence. We have already verified to achieve $ O \rbr{\epsilon} $ error the vanilla Euler--Maruyama scheme needs computational cost of $ O \rbr{\epsilon{-4}} $. For the multilevel scheme, the bias is of order $ O \rbr{\sqrt{h_L}} $ as in the original Euler--Maruyama scheme, and the variance is (by taking $ C_1 = C_2 = C_3 = 1 $)
+\begin{equation}
+\frac{1}{C} \rbr{ \frac{1}{\sqrt{h_0}} + \sum_{ i = 1 }^L \sqrt[4]{\frac{ \log h_i^{-1} }{h_i}} } = O \rbr{ \frac{\sqrt[4]{ \log h_L^{-1} }}{ C \sqrt[4]{h_L} } }.
+\end{equation}
+The final error is
+\begin{equation}
+O \rbr{ \sqrt{h_L} + \frac{\sqrt[8]{ \log h_L^{-1} }}{ \sqrt{C} \sqrt[8]{h_L} } }
+\end{equation}
+The computational complexity is
+\begin{equation}
+C \rbr{ \frac{1}{\sqrt{h_0}} + \sum_{ i = 1 }^L \sqrt[4]{\frac{ \log h_i^{-1} }{h_i}} } = O \rbr{ \frac{ C \sqrt[4]{ \log h_L^{-1} } }{\sqrt[4]{h_L}} }.
+\end{equation}
+Optimally, by setting $ C = O \rbr{ \sqrt[4]{ \log h_L^{-1} } / \sqrt[4]{h_L}^5 } $, we can achieve error $ O \rbr{\sqrt{h_L}} $ error in $ O \rbr{ \sqrt{ \log h_L^{-1} }{\sqrt{h_L}^3}} $ time, or say $ O \rbr{\epsilon} $ error in $ O \rbr{ \sqrt{ \log \epsilon^{-1} } \epsilon^{-3} } $ time. This again outperforms $ O \rbr{\epsilon^{-4}} $.
+
+\section{Conclusion}
+
+We have implemented the Euler--Maruyama scheme towards the problem and verifies its half order convergence (both in bias and variance). We also implement the multi-level Monte Carlo method based on the Euler--Maruyama scheme to solve the problem and compare these algorithms.
+
+We indeed encounter and finally solved some difficulties in finishing this project. One difficulty is the computational efficiency. Since Python is a script language, its interpretation is much slower than compiled codes. As a result, we utilize the C-API of Python to invoke the Euler--Maruyama solver written in C. Again due to efficiency reasons, we utilize OpenMP to run simulations on parallel. The Monte Carlo algorithm is itself embarrassingly parallel. There are also efficiency issues in generating random numbers, and we invoke the random number generator routines in Intel MKL (math kernel library).
+
+Generating random numbers is a big issue: if we run parallel algorithms using the same random seed, then they actually performs the same trajectory and hence the variance will not be decreased. This influences a lot when doing parallel simulation, and wastes us a lot of time. The solution is very simple: to set the seed with an increment to the ID of the thread suffices. The increment will leads to huge effects after a few steps by the linear congruent generator.
+
+We also want to put a remark on the slow convergence of Euler--Maruyama scheme here. The main error comes from the judgement of touching the boundary. One way to solve this problem is to shrinking the boundary by a little in order to alleviate the negative bias. Another method may be choosing time steps adaptively. Possible methods also involves more careful treatment to the quantities near the boundary \parencite{yan_parallel_2013}. A quick idea may be considering the probability that the trajectory between $ \bm{X}^m $ and $ \bm{X}^{ m + 1 } $ touches the boundary. This is a bridge and the covariance can be explicitly carried out, and may provide new insight to discretize the exit time $\tau$.
+
+\printbibliography
+
+\end{document}

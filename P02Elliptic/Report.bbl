@@ -1,0 +1,150 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.0 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{higham_mean_2013}{article}{}
+      \name{author}{5}{}{%
+        {{hash=a392b3ab587ea9896f08eb903fce39c2}{%
+           family={Higham},
+           familyi={H\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=dee42732112bfa77a2dad3811ca0b39c}{%
+           family={Mao},
+           familyi={M\bibinitperiod},
+           given={X.},
+           giveni={X\bibinitperiod}}}%
+        {{hash=8824583a43b2f8279a31bf75a0bf2be5}{%
+           family={Roj},
+           familyi={R\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=dfcd697da58e41b07b0927e77d83ac14}{%
+           family={Song},
+           familyi={S\bibinitperiod},
+           given={Q.},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=978689173d24f19484538fc027c325f5}{%
+           family={Yin},
+           familyi={Y\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{0bf576ca6aaf1a4a191b207d57a4c061}
+      \strng{fullhash}{7cf873510a93744be8238218de66810e}
+      \strng{bibnamehash}{0bf576ca6aaf1a4a191b207d57a4c061}
+      \strng{authorbibnamehash}{0bf576ca6aaf1a4a191b207d57a4c061}
+      \strng{authornamehash}{0bf576ca6aaf1a4a191b207d57a4c061}
+      \strng{authorfullhash}{7cf873510a93744be8238218de66810e}
+      \field{sortinit}{H}
+      \field{sortinithash}{5f15a7bc777ad49ff15aa4d2831b1681}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Numerical methods for stochastic differential equations are relatively inefficient when used to approximate mean exit times. In particular, although the basic Euler--Maruyama method has weak order equal to one for approximating the expected value of the solution, the order reduces to one half when it is used in a straightforward manner to approximate the mean value of a (stopped) exit time. Consequently, the widely used standard approach of combining an Euler--Maruyama discretization with a Monte Carlo simulation leads to a computationally expensive procedure. In this work, we show that the multilevel approach developed by Giles [Oper. Res., 56 (2008), pp. 607--617] can be adapted to the mean exit time context. In order to justify the algorithm, we analyze the strong error of the discretization method in terms of its ability to approximate the exit time. We then show that the resulting multilevel algorithm improves the expected computational complexity by an order of magnitude, in terms of the required accuracy. Numerical results are provided to illustrate the analysis.}
+      \field{day}{1}
+      \field{journaltitle}{{SIAM}/{ASA} Journal on Uncertainty Quantification}
+      \field{month}{1}
+      \field{number}{1}
+      \field{shortjournal}{{SIAM}/{ASA} J. Uncertainty Quantification}
+      \field{title}{Mean Exit Times and the Multilevel Monte Carlo Method}
+      \field{urlday}{30}
+      \field{urlmonth}{12}
+      \field{urlyear}{2018}
+      \field{volume}{1}
+      \field{year}{2013}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2\bibrangedash 18}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.1137/120883803
+      \endverb
+      \verb{file}
+      \verb Full Text PDF:/home/lzh/Zotero/storage/VSDC7R3W/Higham et al. - 2013 - Mean Exit Times and the Multilevel Monte Carlo Met.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://epubs.siam.org/doi/abs/10.1137/120883803
+      \endverb
+      \verb{url}
+      \verb https://epubs.siam.org/doi/abs/10.1137/120883803
+      \endverb
+    \endentry
+    \entry{yan_parallel_2013}{article}{}
+      \name{author}{3}{}{%
+        {{hash=c2490bbe7619d4f6ab356db1243d0ede}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=80373f932d5cb79158fef04808840c4a}{%
+           family={Cai},
+           familyi={C\bibinitperiod},
+           given={W.},
+           giveni={W\bibinitperiod}}}%
+        {{hash=989a018f877d9a0eb20a4911899a4fa5}{%
+           family={Zeng},
+           familyi={Z\bibinitperiod},
+           given={X.},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{184db18006e2d79745a0a7e74eb5c657}
+      \strng{fullhash}{184db18006e2d79745a0a7e74eb5c657}
+      \strng{bibnamehash}{184db18006e2d79745a0a7e74eb5c657}
+      \strng{authorbibnamehash}{184db18006e2d79745a0a7e74eb5c657}
+      \strng{authornamehash}{184db18006e2d79745a0a7e74eb5c657}
+      \strng{authorfullhash}{184db18006e2d79745a0a7e74eb5c657}
+      \field{sortinit}{Y}
+      \field{sortinithash}{b8d711a035f7be9840c721c82920477e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper, a hybrid approach for solving the Laplace equation in general three-dimensional (3-D) domains is presented. The approach is based on a local method for the Dirichlet-to-Neumann ({DtN}) mapping of a Laplace equation by combining a deterministic (local) boundary integral equation ({BIE}) method and the probabilistic Feynman--Kac formula for solutions of elliptic partial differential equations. This hybridization produces a parallel algorithm where the bulk of the computation has no need for data communication between processors. Given Dirichlet data of the solution on a domain boundary, a local {BIE} is established over the boundary of a local region formed by a hemisphere superimposed on the domain boundary. By using a homogeneous Dirichlet Green's function for the whole sphere, the resulting {BIE} involves only the Dirichlet data (the solution value) over the surface of the hemisphere, while over the patch of the domain boundary intersected by the hemisphere, both Dirichlet and Neumann data are used. Then, first, the solution value on the surface of the hemisphere is computed by the Feynman--Kac formula, which is implemented by a Monte Carlo walk-on-spheres algorithm. Second, a boundary collocation method is employed to solve the integral equation on the aforementioned local patch of the domain boundary to yield the required Neumann data there. As a result, a local method of finding the {DtN} mapping is obtained, which can be used to find all Neumann data on the whole domain boundary in a parallel manner. Finally, the potential solution in the whole space can be computed by an integral representation using both the Dirichlet and Neumann data over the domain boundary.}
+      \field{day}{1}
+      \field{issn}{1064-8275}
+      \field{journaltitle}{{SIAM} Journal on Scientific Computing}
+      \field{month}{1}
+      \field{number}{4}
+      \field{shortjournal}{{SIAM} J. Sci. Comput.}
+      \field{title}{A Parallel Method for Solving Laplace Equations with Dirichlet Data Using Local Boundary Integral Equations and Random Walks}
+      \field{urlday}{30}
+      \field{urlmonth}{12}
+      \field{urlyear}{2018}
+      \field{volume}{35}
+      \field{year}{2013}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{B868\bibrangedash B889}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1137/120875004
+      \endverb
+      \verb{file}
+      \verb Full Text PDF:/home/lzh/Zotero/storage/5FJTQMYW/Yan et al. - 2013 - A Parallel Method for Solving Laplace Equations wi.pdf:application/pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://epubs.siam.org/doi/10.1137/120875004
+      \endverb
+      \verb{url}
+      \verb https://epubs.siam.org/doi/10.1137/120875004
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

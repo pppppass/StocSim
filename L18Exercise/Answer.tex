@@ -1,0 +1,37 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+
+\DeclareMathOperator\ope{\mathrm{E}}
+
+\title{Answers to Exercises (Lecture 18)}
+\author{Zhihan Li, 1600010653}
+\date{December 26, 2018}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem.} \textit{Proof.} The finite discretization is
+\begin{equation}
+\ope \exp \rbr{ \si \sum_i \xi \rbr{t_i} \Delta W_{t_i} } .
+\end{equation}
+Since $ \Delta W_{t_i} \sim \mathcal{N} \rbr{ 0, \Delta t_i } $ are independent, we have
+\begin{equation}
+\begin{split}
+&\ptrel{=} \ope \exp \rbr{ \si \sum_i \xi \rbr{t_i} \Delta W_{t_i} } \\
+&= \prod_i \ope \rbr{ \si \sum_i \xi \rbr{t_i} \Delta W_{t_i} } \\
+&= \prod_i \ope \rbr{ \si \sum_i \xi \rbr{t_i} \Delta W_{t_i} } \\
+&= \prod_i \exp \rbr{ -\frac{1}{2} \xi \rbr{t_i}^2 \Delta t_i } \\
+&= \exp \rbr{ -\frac{1}{2} \sum_i \xi \rbr{t_i}^2 \Delta t_i }.
+\end{split}
+\end{equation}
+Passing the limit with $ \Delta t_i \rightarrow 0 $, the discretization converges to
+\begin{equation}
+\exp \rbr{ \frac{1}{2} \int_0^1 \xi^2 \sd t }.
+\end{equation}
+\hfill$\Box$
+
+\end{document}
