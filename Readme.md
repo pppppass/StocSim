@@ -11,6 +11,9 @@ This repository relies on the personal TeX templates package [ptmpls](https://gi
 There are several sub folders in this repository:
 1. `ptmpls`: Personal TeX / LaTeX templates;
 2. `LxxExercise`: Written exercise for lecture `xx`.
+3. `PxxYyyy`: Project `xx` related to `Yyyy`.
+
+There may be C implementations, which are intended for extension of Python script, in the folders. For `P01Ising` and `P02Elliptic`, codes are lying in the folder `samp`.
 
 ## Environment
 
