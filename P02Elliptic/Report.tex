@@ -342,16 +342,16 @@ $N$ & $M$ & Error $\mu$ & Standard deviation $\sigma$ & Time (\Si{s}) \\
 \label{Tbl:EM13}
 \end{table}
 
-Again we note that the solid lines, $\mu$ stands for the bias term and the dashed lines, $\sigma$ stands for the variance of the estimation $ \hat{u} \rbr{\bm{x}} $. From these figures, the error caused by variance, say $\sigma$ is indeed half order convergence. We proceed to look at the bias term. The data point make sense only if the solid line is located over the dashed line, since there are always fluctuation of strength $\sigma$, and this may hide the real values of bias if $\sigma$ is not small enough. However, it can be seen from the figures that $ M = 8 N $ suffices to constrain $ \abs{\mu} > 3 \sigma $ approximately and in this case $\mu$ reflects the bias. We can easily find the bias is also of half order convergence. So our conclusion is \emph{the Euler--Maruyama scheme has \emph{half} order behavior on this problem.}
+Again we note that the solid lines, $\mu$ stands for the bias term and the dashed lines, $\sigma$ stands for the variance of the estimation $ \hat{u} \rbr{\bm{x}} $. From these figures, the error caused by variance, say $\sigma$ is indeed half order convergence. We proceed to look at the bias term. The data point makes sense only if the solid line is located over the dashed line, since there are always fluctuation of strength $\sigma$, and this may hide the real values of bias if $\sigma$ is not small enough. However, it can be seen from the figures that $ M = 8 N $ suffices to constrain $ \abs{\mu} > 3 \sigma $ approximately and in this case $\mu$ reflects the bias. We can easily find the bias is also of half order convergence. So our conclusion is \emph{the Euler--Maruyama scheme has \emph{half} order behavior on this problem.}
 
-One need to notice that $\mu$ are always negative in the tables. According to the special structure of the problem, say $ f \ge 0 $. Because we does not count the segment $ \bm{X}^{m_{\nu}} \bm{X}^{ m_{\nu} + 1 } $ in the quadrature \ref{Eq:Trap}, we expect $\mu$ to be positive but in fact $\mu$ is negative. This means there approximation is itself bad, and if we count the segment larger error will occurs.
+One need to notice that $\mu$ are always negative in the tables. According to the special structure of the problem, say $ f \ge 0 $. Because we does not count the segment $ \bm{X}^{m_{\nu}} \bm{X}^{ m_{\nu} + 1 } $ in the quadrature \eqref{Eq:Trap}, we expect $\mu$ to be positive but in fact $\mu$ is negative. This means there approximation is itself bad, and if we count the segment larger error will occurs.
 
 Some analysis can be done as follows. There are mainly two types of errors:
 \begin{partlist}
 \item The continuous trajectory $\bm{X}_t$ reaches the boundary before the approximated stopping time $ \nu = h \tau_{\nu} $ of the numerical, discrete trajectory $\bm{X}^m$, or say $ \tau < \nu $;
 \item After, or $ \tau > \nu $.
 \end{partlist}
-Since $\mu$ is negative, we deduce that the first case must have happened for a great number of times. This can be understood intuitively since it is well possible that $ \bm{X}^m, \bm{X}^{ m + 1 } \in \mathbb{D}^2 $ but the trajectory (which is a bridge now) between $ h m $ and $ h \rbr{ h m + 1 } $ already touches the boundary. However, this needs careful treatment beyond our capability.
+Since $\mu$ is negative, we deduce that the first case must have happened for a great number of times. This can be understood intuitively since it is well possible that $ \bm{X}^m, \bm{X}^{ m + 1 } \in \mathbb{D}^2 $ but the trajectory (which is a bridge now) between $ h m $ and $ h \rbr{ m + 1 } $ already touches the boundary. However, this needs careful treatment beyond our capability.
 
 We also plot figures of the running time in Figure \ref{Fig:EMTime11}, \ref{Fig:EMTime12} and \ref{Fig:EMTime13} for further comparison.
 
@@ -376,7 +376,7 @@ We also plot figures of the running time in Figure \ref{Fig:EMTime11}, \ref{Fig:
 \label{Fig:EMTime13}
 \end{figure}
 
-Generally speaking the running time has a quadratic with respect to $N$ along a fixed ``refinement path'' $ M = \cdot N $. One may observe the time will be smaller if the starting point $\bm{x}$ is located closer to the boundary. More carefully investigation reveals that $\sigma$ is smaller. This follows the intuition since $\bm{X}$ touches the boundary more easily.
+Generally speaking the running time has a quadratic with respect to $N$ along a fixed ``refinement path'' $ M = C N $. One may observe the time will be smaller if the starting point $\bm{x}$ is located closer to the boundary. More carefully investigation reveals that $\sigma$ is smaller. This follows the intuition since $\bm{X}$ touches the boundary more easily.
 
 We then proceed to consider the second problem. The settings are almost identical to the first problem. The $\bm{x}$ are valued $ \rbr{ 0.5, 0.0 } $, $ \rbr{ 0.0, 0.5 } $ and $ \rbr{ 0.5, 0.5 } $ respectively. The figures are Figure \ref{Fig:EM21}, \ref{Fig:EM22} and \ref{Fig:EM23}.
 
@@ -609,7 +609,7 @@ We have implemented the Euler--Maruyama scheme towards the problem and verifies 
 
 We indeed encounter and finally solved some difficulties in finishing this project. One difficulty is the computational efficiency. Since Python is a script language, its interpretation is much slower than compiled codes. As a result, we utilize the C-API of Python to invoke the Euler--Maruyama solver written in C. Again due to efficiency reasons, we utilize OpenMP to run simulations on parallel. The Monte Carlo algorithm is itself embarrassingly parallel. There are also efficiency issues in generating random numbers, and we invoke the random number generator routines in Intel MKL (math kernel library).
 
-Generating random numbers is a big issue: if we run parallel algorithms using the same random seed, then they actually performs the same trajectory and hence the variance will not be decreased. This influences a lot when doing parallel simulation, and wastes us a lot of time. The solution is very simple: to set the seed with an increment to the ID of the thread suffices. The increment will leads to huge effects after a few steps by the linear congruent generator.
+Generating random numbers is a big issue: if we run parallel algorithms using the same random seed, then they actually performs the same trajectory and hence the variance will not be decreased. This influences a lot when doing parallel simulation, and wastes us a lot of time. The solution is very simple: to set the seed with an increment to the ID of the thread suffices. The increment will lead to huge effects after a few steps by the linear congruent generator.
 
 We also want to put a remark on the slow convergence of Euler--Maruyama scheme here. The main error comes from the judgement of touching the boundary. One way to solve this problem is to shrinking the boundary by a little in order to alleviate the negative bias. Another method may be choosing time steps adaptively. Possible methods also involves more careful treatment to the quantities near the boundary \parencite{yan_parallel_2013}. A quick idea may be considering the probability that the trajectory between $ \bm{X}^m $ and $ \bm{X}^{ m + 1 } $ touches the boundary. This is a bridge and the covariance can be explicitly carried out, and may provide new insight to discretize the exit time $\tau$.
 
