@@ -10,6 +10,8 @@ build/
 *.log
 *.synctex.gz
 *.thm
+*.bcf
+*.run.xml
 
 # Binary files
 *.pdf

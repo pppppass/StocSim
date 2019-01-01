@@ -1,0 +1,516 @@
+%! TeX encoding = UTF-8
+%! TeX program = LuaLaTeX
+
+\documentclass[english, nochinese]{pnote}
+\usepackage[paper]{pdef}
+\usepackage{pgf}
+
+\DeclareMathOperator\ope{\mathrm{E}}
+\DeclareMathOperator\opvar{\mathrm{Var}}
+
+\title{Report for Project 1: \\ Markov Chain Monte Carlo and Ising Model}
+\author{Zhihan Li, 1600010653}
+\date{January 1, 2019}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Problem 1, 2.} \textit{Answer.} We implement the standard Metropolis and kinetic Markov Chain Monte Carlo method study the behavior of 2-D and 3-D Ising models. The details are discussed in the following sections. The implementation uses Python for interface and C for samplers, together with OpenMP for parallel simulations and MKL for random number generation.
+
+\section{Ising model}
+
+The Ising model is a graph $G$, where edges connecting several vertices, named sites, with value $ \sigma_i = \pm 1 $ on them. The Hamiltonian is
+\begin{equation}
+H \rbr{\sigma} = - J \sum_{ \rbr{ i, j } \in E \rbr{G} } \sigma_i \sigma_j - h \sum_{ i \in V \rbr{G} } \sigma_i.
+\end{equation}
+We consider the Gibbs measure under this Hamiltonian, say the discrete probability measure $\mu$ satisfying
+\begin{equation}
+\sd \mu \rbr{\sigma} = \frac{1}{Z} \sum_{\sigma} \exp \rbr{ -\beta H \rbr{\sigma} }
+\end{equation}
+with the normalizing constant $Z$ (partition function) and
+\begin{equation}
+\beta = \frac{1}{ k_{\text{B}} T }
+\end{equation}
+where $ k_{\text{B}} = 1 $ and $T$ is the temperature.
+
+The 2-D Ising model with $ N \times N $ square lattice and the 3-D one with $ N \times N \times N $ are considered in the following sections. The boundary conditions are set periodically.
+
+The Gibbs measure depicts the probability of configurations under a specified temperature $T$. Hence, we may extract average or say statistical values from the measure, which reflects the nature of the system. To be exact, in the 2-D case, the internal energy is defined as
+\begin{equation}
+u = \frac{1}{\abs{ V \rbr{G} }} U = \frac{1}{\abs{ V \rbr{G} }} \int H \rbr{\sigma} \sd \mu \rbr{\sigma}
+\end{equation}
+and the specific heat is defined as
+\begin{equation}
+\begin{split}
+c &= \frac{1}{\abs{ V \rbr{G} }} C = \frac{1}{\abs{ V \rbr{G} }} \int \rbr{ H \rbr{\sigma} - U }^2 \sd \mu \rbr{\sigma} \\
+&= \frac{1}{\abs{ V \rbr{G} }} \rbr{ \int H^2 \rbr{\sigma} \sd \mu \rbr{\sigma} - \rbr{ \int H \rbr{\sigma} \sd \mu \rbr{\sigma} }^2 }.
+\end{split}
+\end{equation}
+The magnetization represents the order and is calculated by
+\begin{equation}
+m = \frac{1}{\abs{ V \rbr{G} }} M = \frac{1}{\abs{ V \rbr{G} }} \int \sum_{ i \in V \rbr{G} } \abs{\sigma_i} \sd \mu \rbr{\sigma},
+\end{equation}
+though there is another definition which computes (s stands for ``signed'')
+\begin{equation}
+m_{\text{s}} = \frac{1}{\abs{ V \rbr{G} }} M_{\text{s}} = \frac{1}{\abs{ V \rbr{G} }} \int \sum_{ i \in V \rbr{G} } \sigma_i \sd \mu \rbr{\sigma}.
+\end{equation}
+The quantity $m_{\text{s}}$ reflects the overall magnetization the under presence of external field $h$, while $m$ stands for the probability of breaks of symmetry. One example is when $ h = 0 $, the exact value of $m_{\text{s}}$ is definitely zero, but the value of $m$ remains an interesting question. High value of $m$ means the symmetry is broken while low values of $m$ means the system is still rather stochastic and low correlation is found.
+
+The spatial correlation function is defined as
+\begin{equation} \label{Eq:Corr}
+\Gamma \rbr{r} = \int \sigma_i \sigma_{ i, r } \sd \mu \rbr{\sigma},
+\end{equation}
+where $ \sigma_{ i, r } $ stands for the site $r$ sites next to $\sigma_i$ along a specified axis. Here $i$ is selected arbitrary. The correlation length decays exponentially with respect to $r$ as
+\begin{equation}
+\Gamma \rbr{r} = \exp \rbr{-\frac{r}{\xi}},
+\end{equation}
+where $\xi$ is the correlation length. However, as we will show later, when the temperature is small, the symmetry breaks and the whole site gets correlated together. In this case, we consider
+\begin{equation}
+\begin{split}
+\Gamma_{\text{o}} \rbr{r} &= \int \rbr{ \sigma_i - \overline{\sigma} } \rbr{ \sigma_{ i, r } - \overline{\sigma} } \sd \mu \rbr{\sigma} \\
+&= \int \sigma_i \sigma_{ i, r } \sd \mu \rbr{\sigma} - \int \overline{\sigma}^2 \sd \mu \rbr{\sigma}
+\end{split}
+\end{equation}
+where
+\begin{equation}
+\overline{\sigma} = \frac{1}{\abs{ V \rbr{G} }} \sum_{ i \in V \rbr{G} } \sigma_i.
+\end{equation}
+We may also calculate $\xi_{\text{o}}$ and here o stands for ``ordered''.
+
+There is a critical temperature $T_{\text{c}}$ and the quantities above have some asymptotic behavior for $T$ near $T_{\text{c}}$. Denote
+\begin{equation}
+\epsilon = \frac{\abs{ T - T_{\text{c} }}}{T_{\text{c}}},
+\end{equation}
+we have asymptotically
+\begin{gather}
+\label{Eq:MCrit}
+m = \epsilon^{\alpha}, \\
+c = \epsilon^{-\gamma}, \\
+\xi = \epsilon^{-\delta}.
+\end{gather}
+One need to notice that \eqref{Eq:MCrit} only holds for $ T < T_{\text{c}} $ while other two equations are applicable to any $T$ near $T_{\text{c}}$. Here $\alpha$, $\gamma$ and $\delta$ are called critical exponents of the Ising model, which have different values for different models (2-D and 3-D in our case) and characterizes the phase transition.
+
+We finally plot a figure to show the phase transition in Ising models. We use the Metropolis algorithm introduced in Section \ref{Sec:Alg} and make 8 simulations under given temperature. Here $N$ is set to be $32$. The figure of sites is shown in Figure \ref{Fig:Sites}.
+
+\begin{figure}[htbp]
+{
+\centering
+\scalebox{0.725}{\input{Figure06.pgf}}
+\caption{Figure of sites}
+\label{Fig:Sites}
+}
+{
+\footnotesize Yellow: $+1$; purple: $-1$.
+}
+\end{figure}
+
+One may directly observe the transition from $ T = 2.0 $ to $ T = 2.5 $. When $ T = 2.0 $, the system are highly correlated and there are only single sites different from others. But when $ T = 2.5 $ the system is not so self-correlated and there are random patterns. The sharpest transformation perceptually is at $ 2.2 \le T \le 2.3 $. This figure provides us some intuition about the system at different temperatures.
+
+\section{Markov Chain Monte Carlo algorithms} \label{Sec:Alg}
+
+In order to sample the Gibbs measure $\mu$, we apply Markov Chain Monte Carlo algorithm here. We first deploy the standard Metropolis algorithm: the site of proposal is picked randomly from $ V \rbr{G} $ with uniform probability, and then the acceptance probability is determined by
+\begin{equation}
+A = \min \cbr{ \exp \rbr{ -\beta \Delta H }, 1 }.
+\end{equation}
+In practice, $ \Delta H $ is computed directly from the site $\sigma_i$ itself and its four or six neighbors. We sample a random number $r$ from $ \mathcal{U} \sbr{ 0, 1 } $ and decide to accept the transition if $ r < A $. Due to efficiency reasons, we apply the random number generator routines in Intel MKL (math kernel library) to do this job. It follows from ergodicity that $\sigma$ will converge to the Gibbs distribution, which is the unique invariant distribution of the Markov Chain.
+
+For find the value of the quantities, we take average from the trajectory, and then take average from different trajectories. To be exact, if we simulate the trajectory for $\mathit{ITER}$ iterations, and then repeat for $\mathit{TRAJ}$ trajectories, the final estimation of some value of the form
+\begin{equation}
+\int F \rbr{\sigma} \sd \mu \rbr{\sigma}
+\end{equation}
+is
+\begin{equation} \label{Eq:Ave}
+\hat{F} = \frac{1}{\mathit{TRAJ}} \sum_{ \textit{tr} = 1 }^{\mathit{TRAJ}} \hat{F}_{\textit{tr}},
+\end{equation}
+where
+\begin{equation}
+\hat{F}_{\textit{tr}} = \frac{1}{ \mathit{END} - \mathit{STRAT} } \sum_{ \textit{it} = \mathit{START} + 1 }^{\mathit{END}} F \rbr{\sigma_{\mathit{tr}}^{\mathit{it}}} 
+\end{equation}
+where $ \sigma_{\mathit{tr}}^{\mathit{it}} $ stands at the $\mathit{it}$-th iteration and the $\mathit{tr}$-th trajectory. The standard deviation can also be estimated using
+\begin{equation}
+\hat{S} = \sqrt{ \frac{1}{\mathit{TRAJ}^2} \rbr{ \sum_{ \mathit{tr} = 1 }^{\mathit{TRAJ}} \hat{F}_{\textit{tr}}^2 - \rbr{ \sum_{ \mathit{tr} = 1 }^{\mathit{TRAJ}} \hat{F}_{\textit{tr}} }^2 } }.
+\end{equation}
+Of course we constrain $ 1 \le \mathit{START} < \mathit{END} \le \mathit{ITER} $. We set $\mathit{START}$ here to ignore some of the configurations in the beginning to reduce bias, since the Markov Chain converges to equilibrium only after a number of steps. We use OpenMP to perform parallel sampling and therefore uses multiple trajectories. Again ergodicity yields convergence.
+
+To observe its convergence, we take $ N = 16, 32, 64, 128 $ in the 2-D case and then check the curve of estimated $m$. We set $ \mathit{START} = \fbr{ \mathit{END} / 3 } $ and $ \mathit{END} = \mathit{END} $ and $ \mathit{TRAJ} = 4 $ since the machine we use have four cores. The figure is given in Figure \ref{Fig:Metro}. The shaded region stands for $ \hat{F} \pm 3 \hat{S} $ in correspondence to the $ 3 \sigma $ principle and we will use this convention all through the report. Here $ J = 1 $ and $ h = 0 $.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure02.pgf}}
+\caption{Magnetization $m$ with respect to iterations using Metropolis algorithm}
+\label{Fig:Metro}
+\end{figure}
+
+We can see generally that the sampling of $ T = 2.5, 3.0 $ converges in $ 2.5 \times 10^8 $ iterations, and the convergence speed is faster as $N$ increases since the absolute value of $m$ decreases. However, for $ T = 1.0, 1.5, 2.0 $, the convergence speed gets slower and slower and finally fails to convergence in $ 2.5 \times 10^8 $ iterations. Generally speaking, using Metropolis algorithm, we need $10^6$ iterations to establish equilibrium at $ N = 16 $ and $10^7$, $10^8$ and $ > 10^8 $ (we guess $10^9$) iterations at $ N = 32, 64, 128 $ respectively.
+
+The failure at smaller $T$ indicates the growth of rejection rate: for smaller $T$, the system gets correlated, and therefore a flip always leads to $ \Delta H > 0 $, which are more frequently rejected. Hence, we try and use the kinetic Monte Carlo algorithm. In this algorithm, the sites are classified according to the value of $\sigma_i$ and its neighbors, since $ \Delta H $ depends only on these sites. In the 2-D case, there are 10 classes, and we calculate the acceptance rate
+\begin{equation}
+A_c = \min \cbr{ \exp \rbr{ -\beta \Delta H_c }, 1 }
+\end{equation}
+where $ \Delta H_c $ is the increment of Hamiltonian in class $c$ for $ 1 \le c \le 10 $. We also counts the number of sites in each class as $n_c$. As a result, we remove the possibility of rejection and sample class a single $c$ with probability
+\begin{equation}
+P_c \propto A_c n_c.
+\end{equation}
+We eventually flip a random site in class $c$. To calculate $\hat{F}$, we need to plug in \eqref{Eq:Ave} by
+\begin{equation}
+\hat{F}_{\mathit{tr}} = \bfrac{ \sum_{ \textit{it} = \textit{START} + 1 }^{\textit{END}} w_{\textit{tr}}^{\textit{it}} F \rbr{\sigma_{\mathit{tr}}^{\mathit{it}} } }{ \sum_{ \textit{it} = \textit{START} + 1 }^{\textit{END}} w_{\textit{tr}}^{\textit{it}} }
+\end{equation}
+and
+\begin{equation}
+w_{\textit{tr}}^{\textit{it}} = \bfrac{n^2}{ \sum_{ c = 1 }^{10} \rbr{ \rbr{n_c} \rbr{ 1 - A_c } }_{\textit{tr}}^{\textit{it}} }
+\end{equation}
+is the expectation of iterations until next flip using Metropolis algorithm. Again ergodicity yields the convergence.
+
+We also test the efficiency of kinetic Monte Carlo using identical settings. The figure is shown in Figure \ref{Fig:KMC}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure01.pgf}}
+\caption{Magnetization $m$ with respect to iterations using kinetic Monte Carlo}
+\label{Fig:KMC}
+\end{figure}
+
+As we stated before, the advantage of kinetic Monte Carlo is that it completely remove the possibility of rejection. One may observe that the curve at $ T = 2.5, 3.0 $ does not change much since the error main stems from sampling instead of rejection. However, the convergence at $ T = 1.0, 1.5, 2.5 $ are dramatically boosted. Generally speaking, we can save $ 9 / 10 $ of the iterations, since the number of iterations of convergence at $ N = 16, 32, 64, 128 $ are about $ 10^5, 10^6, 10^7, 10^8 $ respectively.
+
+What about time complexity? A na\"ive implementation of kinetic Monte Carlo requires $ O \rbr{N^2} $ time for one transition since we need to count the $n_c$ directly. However, using some stack and map techniques, the transition can be realized in $ O \rbr{1} $ time: we create a stack of each class and record the class and position at the stack for each site. To remove a site from a class one only needs to swap the site with the last site in the stack, by changing both the stack the stored position of the last site. After that, we can safely pop the site. Pushing sites in to the stack is easy. We need to point out that this is rather hard to code. The comparison between Metropolis algorithm and the kinetic Monte Carlo are shown in Figure \ref{Fig:MetroKMC}. The settings are identical and are tested in the 2-D case.
+
+\begin{figure}[htbp]
+{
+\centering
+\scalebox{0.725}{\input{Figure03.pgf}}
+\caption{Comparison between Metropolis algorithm and kinetic Monte Carlo in running time}
+\label{Fig:MetroKMC}
+}
+{
+\footnotesize Solid lines: kinetic Monte Carlo; dashed lines: Metropolis algorithm.
+}
+\end{figure}
+
+From this figures, we may conclude that the time grow linearly with iterations, and there are no major differences between different $N$. However, one may also see that there are only a constant multiplicative of difference between kinetic Monte Carlo algorithm and Metropolis algorithm. To be exact, the former takes twice as much time as the latter.
+
+The 3-D case is completely similar. The figure of $m$ and running time with respect to iterations using kinetic Monte Carlo are shown in Figure \ref{Fig:3DKMC} and \ref{Fig:3DTime}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure04.pgf}}
+\caption{Magnetization $m$ using kinetic Monte Carlo for the 3-D problem}
+\label{Fig:3DKMC}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure05.pgf}}
+\caption{Running time of kinetic Monte Carlo for the 3-D problem}
+\label{Fig:3DTime}
+\end{figure}
+
+We can also see the convergence at $ N = 8, 12, 16, 24 $ at about $ 10^5, 10^6, 10^7, 10^8 $. One need to notice the slow convergence at $ T = 4.5 $, which is rather close to the critical temperature. This is caused by the nature of the system and cannot be easily optimized. The time complexity is also linear.
+
+Without specified otherwise, we all use kinetic Monte Carlo for simulation in the following sections.
+
+We finally put a remark about the implementation of calculating correlation length. It is too time consuming to sweep over the whole lattice for $\sigma_i$ in \eqref{Eq:Corr}, but we will lost many samples if only fix $\sigma_i$ at one point. We find the remedy that we move $i$ by one lattice per iteration for calculation, in the direction orthogonal to the axis we specified to calculate the correlation function.
+
+\section{Internal energy and specific heat}
+
+We then proceed to check the quantities. We first test a wide range of temperature $T$ with $ \mathit{TRAJ} = 4 $ and $ \mathit{ITER} = 2.5 \times 10^8 $. We produce the numerical result on a parallelly 4-core machine. The 2-D case is given by Figure \ref{Fig:HeatSmall} and \ref{Fig:CapSmall}. Here $J$ is set to be $1$ and $ h = 0 $.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure07.pgf}}
+\caption{Internal energy $u$ for different temperatures $T$}
+\label{Fig:HeatSmall}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure08.pgf}}
+\caption{Specific heat $c$ for different temperatures $T$}
+\label{Fig:CapSmall}
+\end{figure}
+
+We can see from the figures that the internal energy $u$ has a steepest growth at about $ T = 2.3 $ and the specific heat has a sharp maximum point at the same temperature, which indicates the phase transition. Combined with Figure \ref{Fig:Sites}, this indicates that there is kind of phase transition near this temperature. (Convergence issues accounts for the failure of $ N = 128 $ at low temperatures.) As a result, we zoom in and perform numerical experiments in the interval $ \sbr{ 2.22, 2.32 } $. The numerical result is shown in Figure \ref{Fig:HeatBig} and \ref{Fig:CapBig}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure09.pgf}}
+\caption{Internal energy $u$ for finer temperature $T$}
+\label{Fig:HeatBig}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure10.pgf}}
+\caption{Specific heat $c$ for finer temperature $T$}
+\label{Fig:CapBig}
+\end{figure}
+
+After zooming in, the curve of internal energy $u$ just growth like a straight line, but the heat capacity reaches its maximum in the interval. From the figures, we conclude that the critical temperature is at about 2.28. $N$ does not influence much about the critical temperature. We find the analytical critical temperature is
+\begin{equation}
+T_{\text{c}} = \frac{2}{ \ln \rbr{ 1 + \sqrt{2} } } \approx 2.268185
+\end{equation}
+and this is close to the results yielded by numerical simulation.
+
+We now turn to consider the 3-D case. We use the identical number of trajectories and iterations. The course resolution figure is shown in Figure \ref{Fig:HeatSmall3D} and \ref{Fig:CapSmall3D}. The zoomed figure is shown in Figure \ref{Fig:HeatBig3D} and \ref{Fig:CapBig3D}. Note that the zooming in windows has shifted for different $T$.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure11.pgf}}
+\caption{Internal energy $u$ for different temperatures $T$ for the 3-D problem}
+\label{Fig:HeatSmall3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure12.pgf}}
+\caption{Specific heat $c$ for different temperatures $T$ for the 3-D problem}
+\label{Fig:CapSmall3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure13.pgf}}
+\caption{Internal energy $u$ for finer temperature $T$ for the 3-D problem}
+\label{Fig:HeatBig3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure14.pgf}}
+\caption{Specific heat $c$ for finer temperature $T$ for the 3-D problem}
+\label{Fig:CapBig3D}
+\end{figure}
+
+The behavior of the 3-D case is rather similar to the 2-D one: near the critical temperature, the internal energy suddenly jumps up and there is a sharp maximum of heat capacity near the critical temperature, symboling the phase transition. From Figure \ref{Fig:CapBig3D}, we conclude that the critical temperatures are about 4.31, 4.41, 4.45, 4.47 for $ N = 8, 12, 16, 24 $. The phenomenon of varying temperature differs from the 2-D case. The limiting critical temperature is about $ T_{\text{c}} \approx 4.511536 $, which is again close to our numerical simulation. The finite number of $N$ may account for the difference.
+
+\section{Magnetization}
+
+We turn to consider the magnetization. For further comparison, we first plot the figure of $m$ given $ h = 0 $, $ J = 1 $ at different $T$. The figure of 2-D and 3-D are given respectively in Figure \ref{Fig:MagMag} and \ref{Fig:MagMag3D}. The numerical experiments are done with $ \mathit{TRAJ} = 4 $ and $ \mathit{ITER} = 2.5 \times 10^8 $.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure25.pgf}}
+\caption{Magnetization $m$ for different temperatures $T$}
+\label{Fig:MagMag}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure26.pgf}}
+\caption{Magnetization $m$ for different temperatures $T$ for the 3-D problem}
+\label{Fig:MagMag3D}
+\end{figure}
+
+We can again find phase transition in $m$ near the critical temperature.
+
+We then fix $ J = 1 $ and change the external field $h$. According to symmetry, we only calculate the case $ h > 0 $. We first test $m$ in the 2-D case with $ \textit{TRAJ} = 4 $ and $ \textit{ITER} = 2.5 \times 10^8 $ on a 4-core machine. The numerical results are provided in Figure \ref{Fig:MagAbs}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure15.pgf}
+\caption{Magnetization $m$ for different $h$}
+\label{Fig:MagAbs}
+\end{figure}
+
+From this figure, we conclude that generally $m$ increases as $h$ increases. However, the limit when $ h \rightarrow 0 $ is interesting. When $ T \gg T_{\text{c}} $ the limit seems to be zero, but when $T$ gets smaller there seems to be some non-trivial limit. This corresponds to the spontaneous magnetization, which can be directly calculated by
+\begin{equation}
+M = \sqrt[8]{ 1 - \sinh^{-4} \rbr{ 2 \beta J } }
+\end{equation}
+when $ T < T_{\text{c}} $ in the 2-D case. When $ T = 0.5, 1.0, 1.5, 2.0 $, the equation provides 1.000000, 0.999276, 0.986500, 0.911319 respectively, which is roughly verified by the figure as the intercept on $m$ axis.
+
+We then change the setting with $ \textit{TRAJ} = 1000 $ and $ \textit{ITER} = 10^6 $ to plot the figure of $m_{\text{s}}$. We need to increase the number of trajectories because under critical temperature the configurations are mainly composed of ``positive'' ones and ``negative'' ones, and it is very hard to flip between these two configurations. As a result, there will be high variance if we only sample a few trajectories, since about half of the configurations are ``positive'' and half ``negative''. To neutralize we need more trajectories. The figure is shown in Figure \ref{Fig:Mag}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure16.pgf}
+\caption{Magnetization with signs $m_{\text{s}}$ for different $h$}
+\label{Fig:Mag}
+\end{figure}
+
+From this figure, we conclude that $m_{\text{s}}$ converges to zero when $h$ gets smaller. However, there are difference about the critical temperature: if $ T > T_{\text{c}} $, the curve is smooth and tends to zero; but when $ T < T_{\text{c}} $, there seems to be a ``turning point''. When $h$ is greater than the turning point, $m_{\text{s}}$ just decreases slowly, but when $h$ goes smaller than the turning point, $m_{\text{s}}$ decreases faster. The ``turning point'' locates at $ h = 3 \times 10^{-2}, 2 \times 10^{-2}, 1.2 \times 10^{-2} $ for $ T = 1.0, 1.5, 2.0 $ respectively.
+
+We turn to investigate the 3-D case. The parameters $\mathit{TRAJ}$ and $\mathit{ITER}$ are identical to the experiments respectively. The figures are shown in Figure \ref{Fig:MagAbs3D} and \ref{Fig:Mag}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure17.pgf}
+\caption{Magnetization $m$ for different $h$ for the 3-D problem}
+\label{Fig:MagAbs3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure18.pgf}
+\caption{Magnetization with signs $m_{\text{s}}$ under different $h$ for the 3-D problem}
+\label{Fig:Mag3D}
+\end{figure}
+
+The behavior of these curves are rather similar to the 2-D cases. Reading from the figures, the spontaneous magnetization at $ T = 3.0, 3.5, 4.0 $ are 0.93, 0.88 and 0.75 respectively. The tipping points of $ T = 3.0, 4.0 $ are $ 5 \times 10^{-2}, 2 \times 10^{-2} $ respectively. One interesting thing is that when $ T = 4.5 $, which is very close to $T_{\text{c}}$, the curve of $m_{\text{s}}$ is almost a straight line when $h$ is considered in the logarithm scale.
+
+\section{Correlation function and correlation length}
+
+We then turn to consider the correlation function $\Gamma$ and the characteristic correlation length $\xi$. We take $ \mathit{TRAJ} = 4 $ and $ \mathit{ITER} = 2.5 \times 10^8 $, and then calculate the correlation function. The about $\Gamma$ and $\Gamma_{\text{o}}$ are shown in Figure \ref{Fig:Gamma} and \ref{Fig:GammaO} respectively.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure19.pgf}
+\caption{Correlation function $\Gamma$ for different temperatures $T$}
+\label{Fig:Gamma}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure20.pgf}
+\caption{Correlation function $\Gamma_{\text{o}}$ for different temperatures $T$}
+\label{Fig:GammaO}
+\end{figure}
+
+The staggered curves is caused by numerical and sampling error: it is very hard to control the error under $10^{-4}$ and curves under the upper bound are not reliable for calculating the correlation length. However, we can see the symmetry of $\Gamma$ and $\Gamma_{\text{o}}$. We can also find that the curves of $\Gamma$ with $ T > T_{\text{c}} $ behave like a straight line when $r$ is close to zero or $N$. This shows that the equation
+\begin{equation}
+\Gamma \rbr{r} = \exp \rbr{-\frac{r}{\xi}}
+\end{equation}
+fits the lines. However for $ T < T_{\text{c}} $, $ \Gamma \rbr{r} $ is roughly a constant near $1$, which shows that the system is highly correlated, which obeys the intuition from the figure of sites Figure \ref{Fig:Sites}. The means we need to subtract kind of average value, and we turn to consider $\Gamma_{\text{o}}$. From Figure \ref{Fig:GammaO}, the same equation like
+\begin{equation}
+\Gamma_{\text{o}} \rbr{r} = \Gamma_{\text{o}} \rbr{0} \exp \rbr{-\frac{r}{\xi}}
+\end{equation}
+can also be established, and all the curves all behave like straight lines when $r$ is small or close to $N$. This means we may extract $\xi_{\text{o}}$ for the characteristic length.
+
+As a function of $T$, we plot fitted $\xi$ and $\xi_{\text{o}}$ in Figure \ref{Fig:Xi}. For stability reasons, we adopt $\xi$ for $ T > T_{\text{c}} $ and $\xi_{\text{c}}$ for $ T < T_{\text{c}} $. We fit the correlation length using first several points of $\Gamma$ and $\Gamma_{\text{o}}$. To be exact, $\xi$ is found using linear regression using $ 0 \le r < 6 $ and $\xi_{\text{o}}$ using $ 0 \le r < 3 $.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure21.pgf}
+\caption{Correlation length $\xi$ and $\xi_{\text{o}}$ for different temperatures $T$}
+\label{Fig:Xi}
+\end{figure}
+
+Again we find a sharp maximum near the critical temperature. This indicates the existence of critical exponents.
+
+We also test the 3-D cases with $ \mathit{ITER} = 2.5 \times 10^8 $ and $ \mathit{TRAJ} = 4 $. The results are shown in Figure \ref{Fig:Gamma3D}, \ref{Fig:GammaO3D} and \ref{Fig:Xi3D}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure22.pgf}
+\caption{Correlation function $\Gamma$ for different temperatures $T$ for the 3-D problem}
+\label{Fig:Gamma3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure23.pgf}
+\caption{Correlation function $\Gamma_{\text{o}}$ for different temperatures $T$ for the 3-D problem}
+\label{Fig:GammaO3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure24.pgf}
+\caption{Correlation length $\xi$ and $\xi_{\text{o}}$ for different temperatures $T$ for the 3-D problem}
+\label{Fig:Xi3D}
+\end{figure}
+
+The numerical behavior is very much similar to the 2-D case again. The first two figures verifies the exponential decay of correlation function, and the last figure verifies the sharp maximum, or say the phase transition around critical temperature.
+
+We should point out that in the 3-D cases both $\xi$ and $\xi_{\text{o}}$ are both smaller than that in the 2-D case. This may be caused by the dimension or say the nature of the system.
+
+\section{Critical exponents}
+
+We then check the critical exponents near the critical temperature. We first consider the critical exponent $\alpha$ of specific heat $c$. We test with $ J = 1 $ and $ h = 0 $, together with $ \mathit{ITER} = 2.5 \times 10^8 $ and $ \mathit{TRAJ} = 4 $. We draw figures of $ T > T_{\text{c}} $ in Figure \ref{Fig:CritAlphaHigh} and $ T < T_{\text{c}} $ \ref{Fig:CritAlphaLow}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure27.pgf}}
+\caption{Critical behavior of $c$ when $ T > T_{\text{c}}$}
+\label{Fig:CritAlphaHigh}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure28.pgf}}
+\caption{Critical behavior of $c$ when $ T < T_{\text{c}}$}
+\label{Fig:CritAlphaLow}
+\end{figure}
+
+The theoretical value of $\alpha$ is $0$ since we have
+\begin{equation}
+m \propto \log \epsilon
+\end{equation}
+here. However, the value we get is not exactly zero. There may be two reasons: we have not reach the asymptotic region, say $N$ and $\epsilon$ are not small enough; or this is because the $ \log \epsilon $ term bends the curve. One may see that the slope of curve has a tendency converging to $0$ so there has possibility for the second reason. If we take smaller $\epsilon$ or closer $T$ to $T_{\text{c}}$ we may get better results, but the problem lies that we do not know the ``numerical'' critical temperature exactly. We only take $ \abs{ T - T_{\text{c}} } \approx 10^{-1} $ because of this non-accuracy.
+
+We then investigate the critical exponent of magnetization $m$. Since the critical behavior only happens at $ T < T_{\text{c}} $, we only plot this case in Figure \ref{Fig:CritMagLow}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure29.pgf}}
+\caption{Critical behavior of $m$ when $ T < T_{\text{c}}$}
+\label{Fig:CritMagLow}
+\end{figure}
+
+This time, we can verify $ \beta = -1 $, as told in the theoretical result. (This is the unique critical exponent we have verified numerically through the whole report.)
+
+We finally turn to the critical exponent of $\xi$ and $\xi_{\text{o}}$. The theoretical value is $ \delta = 1 $ here. We plot the numerical result in Figure \ref{Fig:CritXiHigh} and \ref{Fig:CritXiLow}.
+
+\begin{figure}[htbp]
+\centering
+\input{Figure30.pgf}
+\caption{Critical behavior of $\xi$ when $ T > T_{\text{c}}$}
+\label{Fig:CritXiHigh}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure31.pgf}
+\caption{Critical behavior of $\xi_{\text{o}}$ when $ T < T_{\text{c}}$}
+\label{Fig:CritXiLow}
+\end{figure}
+
+Although the critical exponent is $-1$, we get about $-0.6$ here. There may be model issues that $N$ is not large enough, or computational issues that $\epsilon$ is not large enough.
+
+We now turn to the case of 3-D. The figures are given in Figure \ref{Fig:CritAlphaHigh3D}, \ref{Fig:CritAlphaLow3D}, \ref{Fig:CritMagLow3D}, \ref{Fig:CritXiHigh} and \ref{Fig:CritXiLow}.
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure32.pgf}}
+\caption{Critical behavior of $c$ when $ T > T_{\text{c}}$ for the 3-D problem}
+\label{Fig:CritAlphaHigh3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure33.pgf}}
+\caption{Critical behavior of $c$ when $ T < T_{\text{c}}$ for the 3-D problem}
+\label{Fig:CritAlphaLow3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.725}{\input{Figure34.pgf}}
+\caption{Critical behavior of $m$ when $ T < T_{\text{c}}$ for the 3-D problem}
+\label{Fig:CritMagLow3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure35.pgf}
+\caption{Critical behavior of $\xi$ when $ T > T_{\text{c}}$ for the 3-D problem}
+\label{Fig:CritXiHigh3D}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\input{Figure36.pgf}
+\caption{Critical behavior of $\xi_{\text{o}}$ when $ T < T_{\text{c}}$ for the 3-D problem}
+\label{Fig:CritXiLow3D}
+\end{figure}
+
+For the critical exponent $\alpha$ of the specific heat $c$, the value in literature is $ \alpha \approx 0.11008 $, but we get about $0.8$ for $ T > T_{\text{c}} $ and $0.2$ for $ T < T_{\text{c}} $. For the critical exponent $\beta$ for the magnetization, we expect $ \beta \approx 0.326419 $ from the report value but finally get $0.2$. For the critical exponent $\delta$ for the correlation length, others have verified $ \delta \approx 0.629971 $ but we reach $0.4$ for $ T > T_{\text{c}} $ and $0.2$ for $ T < T_{\text{c}} $. One important reason for the discrepancy is that the $N$ we tested is very small due to computational issues (convergence). With larger $N$, the behavior may gets better. Again we emphasize the difficulty lying in finding the exact critical temperature for the problem with finite $N$. Without a good standard of $T_{\text{c}}$, the estimation cannot be made accurate since $\epsilon$ itself has a large error in order.
+
+\section{Conclusion}
+
+We finally finished the five given questions in Problem 1 and 2. We have verified the phase transition in the 2-D and 3-D Ising model, by investigating the internal energy $u$, specific heat $c$, magnetization $m$ ($m_{\text{s}}$), correlation function $\Gamma$ ($\Gamma_{\text{o}}$) and correlation length $\xi$ ($\xi_{\text{o}}$). We also verifies the analytical result of spontaneous magnetization and critical temperature in 2-D Ising model. We finally computes the critical exponents of the 2-D and 3-D Ising model and compares with analytical results or results in literature.
+
+The main difficulty lies in the computational side. The Markov Chain Monte Carlo algorithm it self requires a huge amount of computation to both convergence and reduction in variance. As a result, we adopt the kinetic Monte Carlo algorithm, implement the program in C, uses OpenMP to perform parallel sampling, and finally applies Intel MKL (Math Kernel Library) random number routines to enhance the numerical results. We also applies some data structure techniques in kinetic Monte Carlo to keeps the transition step with time complexity $ O \rbr{1} $. However, the whole experiments takes a long time of 50 hours on a personal 4-core machine.
+
+There are indeed some results need to be enhanced in this report, especially the part about critical exponents. However, this requires more computational resources. The field of quantum chromodynamics is an active area of research and is filled with stochastic simulation problems like this. It is always an intriguing question in the numerical side to design faster and more accurate algorithms for other fields like physics and chemistry. To some extent, this project interested me to consider researches on related areas.
+
+\end{document}
