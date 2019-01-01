@@ -85,11 +85,11 @@ There is a critical temperature $T_{\text{c}}$ and the quantities above have som
 we have asymptotically
 \begin{gather}
 \label{Eq:MCrit}
-m = \epsilon^{\alpha}, \\
-c = \epsilon^{-\gamma}, \\
-\xi = \epsilon^{-\delta}.
+c \approx \epsilon^{-\alpha}, \\
+m \approx \epsilon^{\beta}, \\
+\xi \approx \epsilon^{-\nu}.
 \end{gather}
-One need to notice that \eqref{Eq:MCrit} only holds for $ T < T_{\text{c}} $ while other two equations are applicable to any $T$ near $T_{\text{c}}$. Here $\alpha$, $\gamma$ and $\delta$ are called critical exponents of the Ising model, which have different values for different models (2-D and 3-D in our case) and characterizes the phase transition.
+(Note that we use a slightly different notation, which is more frequently used in literatures.) One need to notice that \eqref{Eq:MCrit} only holds for $ T < T_{\text{c}} $ while other two equations are applicable to any $T$ near $T_{\text{c}}$. Here $\alpha$, $\gamma$ and $\nu$ are called critical exponents of the Ising model, which have different values for different models (2-D and 3-D in our case) and characterizes the phase transition.
 
 We finally plot a figure to show the phase transition in Ising models. We use the Metropolis algorithm introduced in Section \ref{Sec:Alg} and make 8 simulations under given temperature. Here $N$ is set to be $32$. The figure of sites is shown in Figure \ref{Fig:Sites}.
 
@@ -448,7 +448,7 @@ We then investigate the critical exponent of magnetization $m$. Since the critic
 
 This time, we can verify $ \beta = -1 $, as told in the theoretical result. (This is the unique critical exponent we have verified numerically through the whole report.)
 
-We finally turn to the critical exponent of $\xi$ and $\xi_{\text{o}}$. The theoretical value is $ \delta = 1 $ here. We plot the numerical result in Figure \ref{Fig:CritXiHigh} and \ref{Fig:CritXiLow}.
+We finally turn to the critical exponent of $\xi$ and $\xi_{\text{o}}$. The theoretical value is $ \nu = 1 $ here. We plot the numerical result in Figure \ref{Fig:CritXiHigh} and \ref{Fig:CritXiLow}.
 
 \begin{figure}[htbp]
 \centering
@@ -503,7 +503,7 @@ We now turn to the case of 3-D. The figures are given in Figure \ref{Fig:CritAlp
 \label{Fig:CritXiLow3D}
 \end{figure}
 
-For the critical exponent $\alpha$ of the specific heat $c$, the value in literature is $ \alpha \approx 0.11008 $, but we get about $0.8$ for $ T > T_{\text{c}} $ and $0.2$ for $ T < T_{\text{c}} $. For the critical exponent $\beta$ for the magnetization, we expect $ \beta \approx 0.326419 $ from the report value but finally get $0.2$. For the critical exponent $\delta$ for the correlation length, others have verified $ \delta \approx 0.629971 $ but we reach $0.4$ for $ T > T_{\text{c}} $ and $0.2$ for $ T < T_{\text{c}} $. One important reason for the discrepancy is that the $N$ we tested is very small due to computational issues (convergence). With larger $N$, the behavior may gets better. Again we emphasize the difficulty lying in finding the exact critical temperature for the problem with finite $N$. Without a good standard of $T_{\text{c}}$, the estimation cannot be made accurate since $\epsilon$ itself has a large error in order.
+For the critical exponent $\alpha$ of the specific heat $c$, the value in literature is $ \alpha \approx 0.11008 $, but we get about $0.8$ for $ T > T_{\text{c}} $ and $0.2$ for $ T < T_{\text{c}} $. For the critical exponent $\beta$ for the magnetization, we expect $ \beta \approx 0.326419 $ from the report value but finally get $0.2$. For the critical exponent $\nu$ for the correlation length, others have verified $ \nu \approx 0.629971 $ but we reach $0.4$ for $ T > T_{\text{c}} $ and $0.2$ for $ T < T_{\text{c}} $. One important reason for the discrepancy is that the $N$ we tested is very small due to computational issues (convergence). With larger $N$, the behavior may gets better. Again we emphasize the difficulty lying in finding the exact critical temperature for the problem with finite $N$. Without a good standard of $T_{\text{c}}$, the estimation cannot be made accurate since $\epsilon$ itself has a large error in order.
 
 \section{Conclusion}
 

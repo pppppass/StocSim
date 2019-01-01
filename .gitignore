@@ -12,6 +12,7 @@ build/
 *.thm
 *.bcf
 *.run.xml
+*.blg
 
 # Binary files
 *.pdf
